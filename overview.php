@@ -3,7 +3,9 @@ date_default_timezone_set("America/Chicago");
 include("functions.php");
 include("classes.php");
 //$debug = 1;
-$print_each_loan = 1;
+//$print_each_loan = 1;
+$print_each_expense = 1;
+$print_extra_line = 1;
 
 #################### setup ####################
 
@@ -23,11 +25,11 @@ $checking->set_balance('2799.60');
 $savings = $finances->savings;
 
 $savings->set_balance('8106.76');
-$savings->add_transfer('200', 0, 0, 'weekly', '2014-10-03');
+$savings->add_transfer('400', 0, 0, 'weekly', '2014-10-03');
 
 # savings can have interest
-#$savings->setup_earning('monthly', '2014-01-01');
-#$savings->add_interest(8.0, 0, 0, 'constant', null);
+$savings->setup_earning('monthly', '2014-01-01');
+$savings->add_interest(8.0, 0, 0, 'constant', null);
 
 #################### loans ####################
 
@@ -39,6 +41,7 @@ $civic->setup_loan('monthly', '2014-01-01');
 $civic->set_balance('12102.98');
 $civic->add_interest(0.899999, 0, 0, 'constant', null);
 $civic->add_amount('408.15', '0', '0', 'monthly', '2014-01-04');
+#$civic->add_amount('808.15', '2015-01-01', '0', 'monthly', '2014-01-04');
 
 # student loans
 $nelnet1 = $loans->add_loan('nelnet 999-B-1');
@@ -120,16 +123,44 @@ $jaymie->add_amount('2100', 0, 0, 'biweekly', '2014-09-12');
 
 $expenses = $finances->expenses;
 
-# rent
+# housing
 $rent = $expenses->add_item('rent');
 $rent->add_amount('975', '2013-11-01', '2014-11-01', 'monthly', '2013-11-01');
 $rent->add_amount('1000', '2014-11-01', '2015-11-01', 'monthly', '2013-11-01');
 
+$electricity = $expenses->add_item('electricity');
+$electricity->add_amount('80', 0, 0, 'monthly', '2014-01-15');
+
 # food
+$food = $expenses->add_item('food');
+$food->add_amount('250', 0, 0, 'weekly', 'sunday');
 
 # pets
+$pets = $expenses->add_item('pets');
+$pets->add_amount('200', 0, 0, 'monthly', '2014-01-20');
 
-# medical
+# health
+$acupuncture = $expenses->add_item('acupuncture');
+$acupuncture->add_amount('85', 0, 0, 'weekly', 'saturday');
+
+$medicine = $expenses->add_item('medicine');
+$medicine->add_amount('20', 0, 0, 'weekly', 'saturday');
+
+$jcc = $expenses->add_item('jcc');
+$jcc->add_amount('55', 0, 0, 'monthly', '2014-01-15');
+
+$chiropractor = $expenses->add_item('chiropractor');
+$chiropractor->add_amount('49', 0, 0, 'monthly', '2014-01-15');
+
+# car maintenance
+$gas = $expenses->add_item('gas');
+$gas->add_amount('60', 0, 0, 'weekly', 'monday');
+
+$registration = $expenses->add_item('registration');
+$registration->add_amount('100', 0, 0, 'annual', '2014-02-01');
+
+$insurance = $expenses->add_item('insurance');
+$insurance->add_amount('1000', 0, 0, 'semiannual', 'june 1');
 
 # etc
 

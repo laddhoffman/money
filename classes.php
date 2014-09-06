@@ -12,7 +12,7 @@ class Finances {
 	var $today = array();
 	var $date;
 
-	var $columns = array('checking', 'income', 'expenses', 'payments', 'loans', 'interest', 'save', 'savings', 'net_worth');
+	var $columns = array('checking', 'income', 'expenses', 'payments', 'loans', 'save', 'savings', 'net_worth');
 
 	function __construct() {
 		$this->first_day = 0;
@@ -62,6 +62,8 @@ class Finances {
 	}
 	function print_today() {
 		global $print_each_loan;
+		global $print_each_expense;
+		global $print_extra_line;
 		$today = $this->today;
 		$date = $this->date;
 		if ($this->first_day == 0) {
@@ -72,6 +74,11 @@ class Finances {
 			}
 			if ($print_each_loan) {
 				foreach ($this->loans->list as $name => $loan) {
+					printf("\t%s", $name);
+				}
+			}
+			if ($print_each_expense) {
+				foreach ($this->expenses->list as $name => $expense) {
 					printf("\t%s", $name);
 				}
 			}
@@ -87,7 +94,15 @@ class Finances {
 				printf("\t%.2f", $loan->get_balance());
 			}
 		}
+		if ($print_each_expense) {
+			foreach ($this->expenses->list as $name => $expense) {
+				printf("\t%.2f", $expense->get_amount($date));
+			}
+		}
 		printf("\n");
+		if ($print_extra_line) {
+			printf("\n");
+		}
 	}
 	function get_net_worth() {
 		$money = 0;
@@ -194,6 +209,25 @@ class MoneyItem {
 			// make sure the day of month matches the day from $val->extra
 			$day_amount = date('d', strtotime($val->extra));
 			$day_this = date('d', strtotime($date));
+			if ($day_this == $day_amount) {
+				$money = $val->amount;
+			}
+			break;
+		case 'semiannual': 
+			// this is debited once per year
+			// make sure the day matches the day from $val->extra
+			$day_amount = date('m-d', strtotime($val->extra));
+			$day_amount_semi = date('m-d', strtotime("+6 months", strtotime($val->extra)));
+			$day_this = date('m-d', strtotime($date));
+			if ($day_this == $day_amount || $day_this == $day_amount_semi) {
+				$money = $val->amount;
+			}
+			break;
+		case 'annual': 
+			// this is debited once per year
+			// make sure the day matches the day from $val->extra
+			$day_amount = date('m-d', strtotime($val->extra));
+			$day_this = date('m-d', strtotime($date));
 			if ($day_this == $day_amount) {
 				$money = $val->amount;
 			}
