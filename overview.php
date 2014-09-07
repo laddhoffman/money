@@ -5,7 +5,8 @@ include("classes.php");
 //$debug = 1;
 //$print_each_loan = 1;
 $print_each_expense = 1;
-$print_extra_line = 1;
+//$print_extra_line = 1;
+$json_output_file = 'setup.json';
 
 #################### setup ####################
 
@@ -14,22 +15,31 @@ $end_date = '2018-01-05';
 
 $finances = new Finances;
 
-#################### checking ####################
+#################### cash accounts ####################
 
-$checking = $finances->checking;
+$accounts = $finances->accounts;
 
+$checking = $accounts->add_account('checking');
 $checking->set_balance('2799.60');
 
-#################### savings ####################
+$finances->set_default_checking($checking);
 
-$savings = $finances->savings;
+#################### portfolio ####################
 
+$portfolio = $finances->portfolio;
+
+# savings
+$savings = $portfolio->add_account('savings');
 $savings->set_balance('8106.76');
+#no interest
 $savings->add_transfer('400', 0, 0, 'weekly', '2014-10-03');
 
-# savings can have interest
-$savings->setup_earning('monthly', '2014-01-01');
-$savings->add_interest(8.0, 0, 0, 'constant', null);
+# portfolio items can have interest
+$four01k = $portfolio->add_account('401k');
+$four01k->set_balance(0);
+$four01k->setup_earning('monthly', '2014-01-01');
+$four01k->add_interest(8.0, 0, 0, 'constant', null);
+$four01k->add_transfer('500', '2014-12-01', 0, 'monthly', '2014-12-01');
 
 #################### loans ####################
 
@@ -165,6 +175,13 @@ $insurance->add_amount('1000', 0, 0, 'semiannual', 'june 1');
 # etc
 
 ################################################
+
+$json = json_encode($finances, JSON_PRETTY_PRINT);
+$json_out_fh = fopen($json_output_file, "w");
+if ($json_out_fh) {
+	fprintf($json_out_fh, "%s", $json);
+	fclose($json_out_fh);
+}
 
 $date = $start_date;
 while ($date <= $end_date) {

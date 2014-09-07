@@ -1,13 +1,15 @@
 <?php
 
-class Finances {
+class Finances implements JsonSerializable {
 	var $first_day;
 
 	var $loans;
 	var $expenses;
 	var $income;
-	var $checking;
-	var $savings;
+	var $accounts;
+	var $portfolio;
+
+	var $default_checking;
 
 	var $today = array();
 	var $date;
@@ -16,11 +18,15 @@ class Finances {
 
 	function __construct() {
 		$this->first_day = 0;
-		$this->checking = new Account;
-		$this->savings = new Savings($this->checking);
+		$this->accounts = new Accounts;
+		$this->portfolio = new Portfolio;
 		$this->loans = new Loans;
 		$this->income = new MoneyItems;
 		$this->expenses = new MoneyItems;
+	}
+
+	function set_default_checking($checking) {
+		$this->default_checking = $checking;
 	}
 
 	function do_daily_finances($date) {
@@ -29,8 +35,8 @@ class Finances {
 		$income = $this->income;
 		$expenses = $this->expenses;
 		$loans = $this->loans;
-		$checking = $this->checking;
-		$savings = $this->savings;
+		$checking = $this->default_checking;
+		$portfolio = $this->portfolio;
 
 		// income calculations
 		$today['income'] = $income->get_all($date);
@@ -44,9 +50,9 @@ class Finances {
 		$today['loans'] = $loans->get_all_balances();
 
 		// savings calculations
-		$today['save'] = $savings->compute_transfers($date);
-		$today['earn'] = $savings->compute_interest($date);
-		$today['savings'] = $savings->get_balance();
+		$today['invest'] = $portfolio->compute_all_transfers($date, $checking);
+		$today['earn'] = $portfolio->compute_all_interest($date);
+		$today['portfolio'] = $portfolio->get_all_balances();
 
 		// checking calculations
 		$checking->deposit($today['income']);
@@ -106,14 +112,25 @@ class Finances {
 	}
 	function get_net_worth() {
 		$money = 0;
-		$money += $this->checking->get_balance();
-		$money += $this->savings->get_balance();
+		$money += $this->accounts->get_all_balances();
+		$money += $this->portfolio->get_all_balances();
 		$money -= $this->loans->get_all_balances();
 		return $money;
 	}
+
+	function jsonSerialize() {
+		// return an array
+		$res = array();
+		$res['portfolio'] = $this->portfolio->jsonSerialize();
+		$res['accounts'] = $this->accounts->jsonSerialize();
+		$res['loans'] = $this->loans->jsonSerialize();
+		$res['income'] = $this->income->jsonSerialize();
+		$res['expenses'] = $this->expenses->jsonSerialize();
+		return $res;
+	}
 }
 
-class ValueInterval {
+class ValueInterval implements JsonSerializable {
 	var $amount;
 	var $date_start;
 	var $date_end;
@@ -140,9 +157,18 @@ class ValueInterval {
 		//if ($debug) { echo $res ? "yes" : "no"; echo "\n"; }
 		return $res;
 	}
+	function jsonSerialize() {
+		$res = array();
+		$res['amount'] = $this->amount;
+		$res['date_start'] = $this->date_start;
+		$res['date_end'] = $this->date_end;
+		$res['period'] = $this->period;
+		$res['extra'] = $this->extra;
+		return $res;
+	}
 }
 
-class MoneyItems {
+class MoneyItems implements JsonSerializable {
 	// each MoneyItems object contains a list of MoneyItem objects
 	var $list = array(); // array of MoneyItem
 	function add_item($name) {
@@ -158,9 +184,19 @@ class MoneyItems {
 		}
 		return $money;
 	}
+	function jsonSerialize() {
+		$res = array();
+		foreach ($this->list as $name => $item) {
+			$res[] = array(
+				'name' => $name,
+				'item' => $item->jsonSerialize(),
+			);
+		}
+		return $res;
+	}
 }
 
-class MoneyItem {
+class MoneyItem implements JsonSerializable {
 	// each MoneyItem has a list of date ranges during which certain values apply
 	var $list = array(); // array of ValueInterval
 	function add_amount($amount, $date_start, $date_end, $period, $extra) {
@@ -247,10 +283,17 @@ class MoneyItem {
 		}
 		return $money;
 	}
+	function jsonSerialize() {
+		$res = array();
+		foreach ($this->list as $item) {
+			$res[] = $item->jsonSerialize();
+		}
+		return $res;
+	}
 }
 
-class Loans {
-	var $list = array();
+class Loans implements JsonSerializable {
+	var $list = array(); // array of Loan objects
 	function add_loan($name) {
 		$this_loan = new Loan();
 		$this->list[$name] = $this_loan;
@@ -282,9 +325,19 @@ class Loans {
 		}
 		return $money;
 	}
+	function jsonSerialize() {
+		$res = array();
+		foreach ($this->list as $name => $loan) {
+			$res[] = array(
+				'name' => $name,
+				'loan' => $loan->jsonSerialize(),
+			);
+		}
+		return $res;
+	}
 }
 
-class Loan extends MoneyItem {
+class Loan extends MoneyItem implements JsonSerializable {
 	// a loan has items which represent the payment schedule
 	// a loan also has a balance
 	var $balance;
@@ -344,9 +397,46 @@ class Loan extends MoneyItem {
 		$this->balance += $money;
 		return $money;
 	}
+	function jsonSerialize() {
+		global $debug;
+		if ($debug) {print_r($this);}
+		$res = array();
+		$res['balance'] = $this->get_balance();
+		$res['apr_schedule'] = $this->apr_schedule->jsonSerialize();
+		$res['payment_schedule'] = parent::jsonSerialize();
+		return $res;
+	}
 }
 
-class Account {
+class Accounts implements JsonSerializable {
+	// a collection of "checking" accounts 
+	var $list = array(); // array of Savings objects
+	function add_account($name) {
+		$this_account = new Account;
+		$this->list[$name] = $this_account;
+		return $this_account;
+	}
+	function get_all_balances() {
+		// return all balances
+		$money = 0;
+		foreach ($this->list as $this_account) {
+			$money += $this_account->get_balance();
+		}
+		return $money;
+	}
+	function jsonSerialize() {
+		$res = array();
+		foreach ($this->list as $name => $account) {
+			$res[] = array(
+				'name' => $name,
+				'account' => $account->jsonSerialize(),
+			);
+		}
+		return $res;
+	}
+}
+
+class Account implements JsonSerializable {
 	// an account has a balance
 	var $balance;
 	
@@ -376,29 +466,91 @@ class Account {
 		}
 		$this->balance -= $amount;
 	}
+	function jsonSerialize() {
+		$res = array();
+		$res['balance'] = $this->get_balance();
+		return $res;
+	}
 }
 
-class Savings extends Account {
+class Portfolio implements JsonSerializable {
+	// a collection of "savings" accounts which can have earnings
+	var $list = array(); // array of Savings objects
+	function add_account($name) {
+		$this_account = new Savings();
+		$this->list[$name] = $this_account;
+		return $this_account;
+	}
+	function get_all_balances() {
+		// return all balances
+		$money = 0;
+		foreach ($this->list as $this_account) {
+			$money += $this_account->get_balance();
+		}
+		return $money;
+	}
+	function compute_all_interest($date) {
+		// compute interest on each account, adding it to the balance
+		global $debug;
+		if ($debug) { echo "compute_all_interest('$date');\n";}
+		$money = 0;
+		foreach ($this->list as $this_account) {
+			$money += $this_account->compute_interest($date);
+		}
+		return $money;
+	}
+	function compute_all_transfers($date, $default_checking) {
+		// compute transfers to each account, adding it to the balance
+		global $debug;
+		if ($debug) { echo "compute_all_transfers('$date');\n";}
+		$money = 0;
+		foreach ($this->list as $this_account) {
+			$money += $this_account->compute_transfers($date, $default_checking);
+		}
+		return $money;
+	}
+	function jsonSerialize() {
+		$res = array();
+		foreach ($this->list as $name => $account) {
+			$res[] = array(
+				'name' => $name,
+				'account' => $account->jsonSerialize(),
+			);
+		}
+		return $res;
+	}
+}
+
+class Savings extends Account implements JsonSerializable {
 	// a savings account can be set up to have a recurring deposit from a checking account
 	// TODO: if needed, set up a way to implement deposits to savings from more than one checking account
 	var $checking; // an Account that is the source for this fund
 	var $transfer_schedule; // a MoneyItem object referring to the schedule for transfers from checking savings
 	// a savings account can also interest. In effect this is because you are GIVING a loan.
 	var $earning; // a Loan object
-	function __construct($checking) {
-		$this->checking = $checking;
+	function __construct() {
 		$this->transfer_schedule = new MoneyItem;
 		$this->earning = new Loan;
 	}
-
+	function set_checking($checking) {
+		$this->checking = $checking;
+	}
+	function get_checking() {
+		return $this->checking;
+	}
 	function add_transfer($amount, $date_start, $date_end, $period, $extra) {
 		$this->transfer_schedule->add_amount($amount, $date_start, $date_end, $period, $extra);
 	}
 
-	function compute_transfers($date) {
+	function compute_transfers($date, $default_checking) {
 		// take money from checking and put into savings
+		if (isset($this->checking)) {
+			$checking = $this->checking;
+		} else {
+			$checking = $default_checking;
+		}
 		$amount = $this->transfer_schedule->get_amount($date);
-		$this->checking->withdraw($amount);
+		$checking->withdraw($amount);
 		$this->deposit($amount);
 		return $amount;
 	}
@@ -421,7 +573,16 @@ class Savings extends Account {
 		}
 		return $money;
 	}
+	function jsonSerialize() {
+		$res = array();
+		$res['balance'] = $this->get_balance();
+		$res['checking'] = $this->checking->name;
+		$res['transfer_schedule'] = $this->transfer_schedule->jsonSerialize();
+		if (isset($this->earning->apr_schedule)) {
+			$res['earning'] = $this->earning->jsonSerialize();
+		}
+		return $res;
+	}
 }
-
 
 ?>
