@@ -1,0 +1,36 @@
+Finance
+ name: string
+ default checking: string
+ checking accounts:
+  array of Account
+ portfolio:
+  array of Savings
+ loans:
+  array of Loan
+ income:
+  array of MoneyItem
+ expenses:
+  array of MoneyItem
+
+MoneyItem: array of ValueInterval
+
+Account
+ name: string
+ balance: number
+
+Savings
+ $Account
+ transfer schedule: $MoneyItem
+ earning: $Loan
+
+Loan
+ $Account
+ apr schedule: $MoneyItem
+ $MoneyItem
+
+ValueInterval:
+ amount: number
+ date_start: date
+ date_end: date
+ period: string
+ extra: date

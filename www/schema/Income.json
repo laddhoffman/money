@@ -1,0 +1,4 @@
+{
+ "title": "Income",
+ "$ref": "schema/MoneyItems.json"
+}

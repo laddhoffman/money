@@ -1,0 +1,566 @@
+<html>
+<head>
+<title>Laddtropia - Finance JSON Editor</title>
+<script src='jsoneditor.js'></script>
+</head>
+<body>
+    <button id='submit'>Submit (console.log)</button>
+    <button id='restore'>Restore to Default</button>
+    <button id='enable_disable'>Disable/Enable Form</button>
+    <span id='valid_indicator'></span>
+    
+    <div id='editor_holder'></div>
+    
+    <script>
+      // This is the starting value for the editor
+      // We will use this to seed the initial editor 
+      // and to provide a "Restore to Default" button.
+      var starting_value = [
+{
+    "default_checking": "checking",
+    "portfolio": [
+        {
+            "name": "savings",
+            "balance": "8106.76",
+            "checking": null,
+            "transfer_schedule": [
+                {
+                    "amount": "400",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "weekly",
+                    "extra": "2014-10-03"
+                }
+            ]
+        },
+        {
+            "name": "401k",
+            "balance": 0,
+            "checking": null,
+            "transfer_schedule": [
+                {
+                    "amount": "500",
+                    "date_start": "2014-12-01",
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-12-01"
+                }
+            ],
+            "earning": {
+                "balance": null,
+                "apr_schedule": [
+                    {
+                        "amount": 8,
+                        "date_start": 0,
+                        "date_end": 0,
+                        "period": "constant",
+                        "extra": null
+                    }
+                ],
+                "payment_schedule": [
+
+                ]
+            }
+        }
+    ],
+    "accounts": [
+        {
+            "name": "checking",
+            "balance": "2799.60"
+        }
+    ],
+    "loans": [
+        {
+            "name": "civic",
+            "balance": "12102.98",
+            "apr_schedule": [
+                {
+                    "amount": 0.899999,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "constant",
+                    "extra": null
+                }
+            ],
+            "payment_schedule": [
+                {
+                    "amount": "408.15",
+                    "date_start": "0",
+                    "date_end": "0",
+                    "period": "monthly",
+                    "extra": "2014-01-04"
+                }
+            ]
+        },
+        {
+            "name": "nelnet 999-B-1",
+            "balance": "8300.00",
+            "apr_schedule": [
+                {
+                    "amount": 6.8,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "constant",
+                    "extra": null
+                }
+            ],
+            "payment_schedule": [
+                {
+                    "amount": 95.57,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-10"
+                }
+            ]
+        },
+        {
+            "name": "nelnet 999-A-0",
+            "balance": "5171.64",
+            "apr_schedule": [
+                {
+                    "amount": 5.6,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "constant",
+                    "extra": null
+                }
+            ],
+            "payment_schedule": [
+                {
+                    "amount": 11.56,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-10"
+                }
+            ]
+        },
+        {
+            "name": "nelnet 181-A-0",
+            "balance": "3134.28",
+            "apr_schedule": [
+                {
+                    "amount": 5.35,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "constant",
+                    "extra": null
+                }
+            ],
+            "payment_schedule": [
+                {
+                    "amount": 40.76,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-12"
+                }
+            ]
+        },
+        {
+            "name": "sallie mae 1",
+            "balance": "5011.12",
+            "apr_schedule": [
+                {
+                    "amount": 3,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "constant",
+                    "extra": null
+                }
+            ],
+            "payment_schedule": [
+                {
+                    "amount": 100,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-10"
+                }
+            ]
+        },
+        {
+            "name": "sallie mae 2",
+            "balance": "11058.10",
+            "apr_schedule": [
+                {
+                    "amount": 2.875,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "constant",
+                    "extra": null
+                }
+            ],
+            "payment_schedule": [
+                {
+                    "amount": 200,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-10"
+                }
+            ]
+        },
+        {
+            "name": "freedom",
+            "balance": "1624.20",
+            "apr_schedule": [
+                {
+                    "amount": 12.99,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "constant",
+                    "extra": null
+                }
+            ],
+            "payment_schedule": [
+                {
+                    "amount": "2000",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-20"
+                }
+            ]
+        },
+        {
+            "name": "citi",
+            "balance": "1808.44",
+            "apr_schedule": [
+
+            ],
+            "payment_schedule": [
+                {
+                    "amount": "500",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-20"
+                }
+            ]
+        },
+        {
+            "name": "amex",
+            "balance": "72.74",
+            "apr_schedule": [
+                {
+                    "amount": 17.24,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "constant",
+                    "extra": null
+                }
+            ],
+            "payment_schedule": [
+                {
+                    "amount": "500",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-20"
+                }
+            ]
+        },
+        {
+            "name": "mattress",
+            "balance": "2603.92",
+            "apr_schedule": [
+
+            ],
+            "payment_schedule": [
+                {
+                    "amount": "56.69",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-13"
+                }
+            ]
+        },
+        {
+            "name": "nordstrom",
+            "balance": 389.19,
+            "apr_schedule": [
+
+            ],
+            "payment_schedule": [
+                {
+                    "amount": 100,
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-10"
+                }
+            ]
+        }
+    ],
+    "income": [
+        {
+            "name": "Ladd",
+            "schedule": [
+                {
+                    "amount": "2500",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "biweekly",
+                    "extra": "2014-09-05"
+                }
+            ]
+        },
+        {
+            "name": "Jaymie",
+            "schedule": [
+                {
+                    "amount": "2100",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "biweekly",
+                    "extra": "2014-09-12"
+                }
+            ]
+        }
+    ],
+    "expenses": [
+        {
+            "name": "rent",
+            "schedule": [
+                {
+                    "amount": "975",
+                    "date_start": "2013-11-01",
+                    "date_end": "2014-11-01",
+                    "period": "monthly",
+                    "extra": "2013-11-01"
+                },
+                {
+                    "amount": "1000",
+                    "date_start": "2014-11-01",
+                    "date_end": "2015-11-01",
+                    "period": "monthly",
+                    "extra": "2013-11-01"
+                }
+            ]
+        },
+        {
+            "name": "electricity",
+            "schedule": [
+                {
+                    "amount": "80",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-15"
+                }
+            ]
+        },
+        {
+            "name": "food",
+            "schedule": [
+                {
+                    "amount": "250",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "weekly",
+                    "extra": "sunday"
+                }
+            ]
+        },
+        {
+            "name": "pets",
+            "schedule": [
+                {
+                    "amount": "200",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-20"
+                }
+            ]
+        },
+        {
+            "name": "acupuncture",
+            "schedule": [
+                {
+                    "amount": "85",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "weekly",
+                    "extra": "saturday"
+                }
+            ]
+        },
+        {
+            "name": "medicine",
+            "schedule": [
+                {
+                    "amount": "20",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "weekly",
+                    "extra": "saturday"
+                }
+            ]
+        },
+        {
+            "name": "jcc",
+            "schedule": [
+                {
+                    "amount": "55",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-15"
+                }
+            ]
+        },
+        {
+            "name": "chiropractor",
+            "schedule": [
+                {
+                    "amount": "49",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "monthly",
+                    "extra": "2014-01-15"
+                }
+            ]
+        },
+        {
+            "name": "gas",
+            "schedule": [
+                {
+                    "amount": "60",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "weekly",
+                    "extra": "monday"
+                }
+            ]
+        },
+        {
+            "name": "registration",
+            "schedule": [
+                {
+                    "amount": "100",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "annual",
+                    "extra": "2014-02-01"
+                }
+            ]
+        },
+        {
+            "name": "insurance",
+            "schedule": [
+                {
+                    "amount": "1000",
+                    "date_start": 0,
+                    "date_end": 0,
+                    "period": "semiannual",
+                    "extra": "june 1"
+                }
+            ]
+        }
+    ]
+}
+];
+      
+      // Initialize the editor
+      var editor = new JSONEditor(document.getElementById('editor_holder'),{
+        // Enable fetching schemas via ajax
+        ajax: true,
+        
+        // The schema for the editor
+/*
+        schema: {
+          type: "array",
+          title: "People",
+          format: "tabs",
+          items: {
+            title: "Person",
+            headerTemplate: "{{i}} - {{self.name}}",
+            oneOf: [
+              {
+                $ref: "basic_person.json",
+                title: "Basic Person"
+              },
+              {
+                $ref: "person.json",
+                title: "Complex Person"
+              }
+            ]
+          }
+        },
+*/
+
+        schema: {
+          type: "array",
+          title: "Financial Setups",
+          format: "tabs",
+          items: {
+            title: "Financial Setup",
+            headerTemplate: "{{i}} - {{self.name}}",
+            oneOf: [
+              {
+                $ref: "money_setup.json",
+                title: "Basic Financial Setup"
+              }
+            ]
+          }
+        },
+        
+        // Seed the form with a starting value
+        startval: starting_value,
+        
+        // Disable additional properties
+        no_additional_properties: true,
+        
+        // Require all properties by default
+        required_by_default: true
+      });
+      
+      // Hook up the submit button to log to the console
+      document.getElementById('submit').addEventListener('click',function() {
+        // Get the value from the editor
+        console.log(editor.getValue());
+      });
+      
+      // Hook up the Restore to Default button
+      document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+      });
+      
+      // Hook up the enable/disable button
+      document.getElementById('enable_disable').addEventListener('click',function() {
+        // Enable form
+        if(!editor.isEnabled()) {
+          editor.enable();
+        }
+        // Disable form
+        else {
+          editor.disable();
+        }
+      });
+      
+      // Hook up the validation indicator to update its 
+      // status whenever the editor changes
+      editor.on('change',function() {
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+        
+        var indicator = document.getElementById('valid_indicator');
+        
+        // Not valid
+        if(errors.length) {
+          indicator.style.color = 'red';
+          indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+          indicator.style.color = 'green';
+          indicator.textContent = "valid";
+        }
+      });
+    </script>
+</body>
+</html>

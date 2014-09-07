@@ -1,0 +1,9 @@
+{
+ "type": "array",
+ "format": "table",
+ "title": "Portfolio",
+ "uniqueItems": true,
+ "items": {
+  "$ref": "schema/Savings.json"
+ }
+}

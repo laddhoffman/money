@@ -1,0 +1,14 @@
+{
+   "type": "object",
+   "properties": {
+    "name": {
+     "title": "Account Name",
+     "type": "string"
+    },
+    "balance": {
+     "title": "Balance",
+     "type": "number",
+     "default": "0.00"
+    }
+   }
+}

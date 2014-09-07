@@ -1,0 +1,9 @@
+{
+ "type": "array",
+ "format": "table",
+ "title": "Checking Accounts",
+ "uniqueItems": true,
+ "items": {
+  "$ref": "schema/Account.json"
+ }
+}

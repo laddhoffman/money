@@ -1,0 +1,32 @@
+{
+ "type": "object",
+ "properties": {
+  "amount": {
+   "type": "number"
+  },
+  "date_start": {
+   "title": "Start Date",
+   "type": "string"
+  },
+  "date_end": {
+   "title": "End Date",
+   "type": "string"
+  },
+  "period": {
+   "title": "Period",
+   "type": "string",
+   "enum": [
+    "weekly",
+    "biweekly",
+    "monthly",
+    "semiannual",
+    "annual"
+   ],
+   "default": "biweekly"
+  },
+  "extra": {
+   "title": "Key Date",
+   "type": "string"
+  }
+ }
+}

@@ -22,7 +22,7 @@ $accounts = $finances->accounts;
 $checking = $accounts->add_account('checking');
 $checking->set_balance('2799.60');
 
-$finances->set_default_checking($checking);
+$finances->set_default_checking_name('checking');
 
 #################### portfolio ####################
 

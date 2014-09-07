@@ -1,0 +1,7 @@
+{
+ "type": "array",
+ "format": "table",
+ "items": {
+  "$ref": "schema/ValueInterval.json"
+ }
+}

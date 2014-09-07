@@ -10,6 +10,7 @@ class Finances implements JsonSerializable {
 	var $portfolio;
 
 	var $default_checking;
+	var $default_checking_name;
 
 	var $today = array();
 	var $date;
@@ -27,6 +28,11 @@ class Finances implements JsonSerializable {
 
 	function set_default_checking($checking) {
 		$this->default_checking = $checking;
+	}
+
+	function set_default_checking_name($name) {
+		$this->default_checking_name = $name;
+		$this->default_checking = $this->accounts->list[$name];
 	}
 
 	function do_daily_finances($date) {
@@ -121,6 +127,7 @@ class Finances implements JsonSerializable {
 	function jsonSerialize() {
 		// return an array
 		$res = array();
+		$res['default_checking'] = $this->default_checking_name;
 		$res['portfolio'] = $this->portfolio->jsonSerialize();
 		$res['accounts'] = $this->accounts->jsonSerialize();
 		$res['loans'] = $this->loans->jsonSerialize();
@@ -187,10 +194,10 @@ class MoneyItems implements JsonSerializable {
 	function jsonSerialize() {
 		$res = array();
 		foreach ($this->list as $name => $item) {
-			$res[] = array(
-				'name' => $name,
-				'item' => $item->jsonSerialize(),
-			);
+			$item_res = array();
+			$item_res['name'] = $name;
+			$item_res['schedule'] = $item->jsonSerialize();
+			$res[] = $item_res;
 		}
 		return $res;
 	}
@@ -327,11 +334,8 @@ class Loans implements JsonSerializable {
 	}
 	function jsonSerialize() {
 		$res = array();
-		foreach ($this->list as $name => $loan) {
-			$res[] = array(
-				'name' => $name,
-				'loan' => $loan->jsonSerialize(),
-			);
+		foreach ($this->list as $name => $item) {
+			$res[] = serialize_named_object($name, $item);
 		}
 		return $res;
 	}
@@ -410,7 +414,7 @@ class Loan extends MoneyItem implements JsonSerializable {
 
 class Accounts implements JsonSerializable {
 	// a collection of "checking" accounts 
-	var $list = array(); // array of Savings objects
+	var $list = array(); // array of Account objects
 	function add_account($name) {
 		$this_account = new Account;
 		$this->list[$name] = $this_account;
@@ -426,11 +430,8 @@ class Accounts implements JsonSerializable {
 	}
 	function jsonSerialize() {
 		$res = array();
-		foreach ($this->list as $name => $account) {
-			$res[] = array(
-				'name' => $name,
-				'account' => $account->jsonSerialize(),
-			);
+		foreach ($this->list as $name => $item) {
+			$res[] = serialize_named_object($name, $item);
 		}
 		return $res;
 	}
@@ -511,11 +512,8 @@ class Portfolio implements JsonSerializable {
 	}
 	function jsonSerialize() {
 		$res = array();
-		foreach ($this->list as $name => $account) {
-			$res[] = array(
-				'name' => $name,
-				'account' => $account->jsonSerialize(),
-			);
+		foreach ($this->list as $name => $item) {
+			$res[] = serialize_named_object($name, $item);
 		}
 		return $res;
 	}

@@ -5,6 +5,16 @@ function next_day($date) {
 	return date("Y-m-d", strtotime("+1 day", strtotime($date)));
 }
 
+function serialize_named_object($name, $item) {
+	$res = array();
+	$res['name'] = $name;
+	$item_res = $item->jsonSerialize();
+	foreach ($item_res as $key => $value) {
+		$res[$key] = $value;
+	}
+	return $res;
+}
+
 function print_item($name, $value) {
 	printf("\t%s %.2f", $name, $value);
 }

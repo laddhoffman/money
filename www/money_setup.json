@@ -1,0 +1,25 @@
+{
+ "title": "Financial Setup",
+ "type": "object",
+ "id": "finance",
+ "properties": {
+  "Name": {
+   "title": "Financial Setup Name",
+   "type": "string",
+   "description": "Name for this financial setup"
+  },
+  "Default checking account": {
+   "type": "string",
+   "description": "Name of your default checking account"
+  },
+  "accounts": {
+   "$ref": "schema/Accounts.json"
+  },
+  "income": {
+   "$ref": "schema/Income.json"
+  },
+  "portfolio": {
+   "$ref": "schema/Portfolio.json"
+  }
+ }
+}
