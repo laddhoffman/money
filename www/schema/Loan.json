@@ -1,0 +1,13 @@
+{
+ "$ref": "schema/Account.json",
+ "properties": {
+  "apr_schedule": {
+   "title": "APR Schedule",
+   "$ref": "schema/MoneyItem.json"
+  },
+  "payment_schedule": {
+   "title": "Payment Schedule",
+   "$ref": "schema/MoneyItem.json"
+  }
+ }
+}

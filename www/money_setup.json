@@ -20,6 +20,12 @@
   },
   "portfolio": {
    "$ref": "schema/Portfolio.json"
+  },
+  "loans": {
+   "$ref": "schema/Loans.json"
+  },
+  "expenses": {
+   "$ref": "schema/Expenses.json"
   }
  }
 }

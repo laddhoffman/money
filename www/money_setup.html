@@ -471,41 +471,29 @@
         ajax: true,
         
         // The schema for the editor
-/*
-        schema: {
-          type: "array",
-          title: "People",
-          format: "tabs",
-          items: {
-            title: "Person",
-            headerTemplate: "{{i}} - {{self.name}}",
-            oneOf: [
-              {
-                $ref: "basic_person.json",
-                title: "Basic Person"
-              },
-              {
-                $ref: "person.json",
-                title: "Complex Person"
-              }
-            ]
-          }
-        },
-*/
 
         schema: {
+	/*
+          title: "Financial Setup",
+          format: "tabs",
+	  $ref: "money_setup.json"
+	*/
           type: "array",
           title: "Financial Setups",
           format: "tabs",
           items: {
             title: "Financial Setup",
-            headerTemplate: "{{i}} - {{self.name}}",
+            // headerTemplate: "{{$self.name}}",
+            $ref: "money_setup.json"
+	/*
             oneOf: [
               {
                 $ref: "money_setup.json",
                 title: "Basic Financial Setup"
               }
             ]
+
+	*/
           }
         },
         

@@ -1,0 +1,9 @@
+{
+ "type": "array",
+ "format": "table",
+ "title": "Loans",
+ "uniqueItems": true,
+ "items": {
+  "$ref": "schema/Loan.json"
+ }
+}
