@@ -8,7 +8,18 @@
    "type": "string",
    "description": "Name for this financial setup"
   },
-  "Default checking account": {
+  "start_date": {
+   "title": "Start Date",
+   "type": "string",
+   "description": "Date from which to begin projection. Note that account balances should be current with this date."
+  },
+  "end_date": {
+   "title": "End Date",
+   "type": "string",
+   "description": "Date to which we will carry the projection."
+  },
+  "default_checking": {
+   "title":"Default checking account",
    "type": "string",
    "description": "Name of your default checking account"
   },

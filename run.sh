@@ -1,2 +1,2 @@
 #!/bin/bash
-php overview.php > finances.txt
+php overview.php --input setup.json > finances.txt
