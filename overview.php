@@ -18,15 +18,14 @@ $json_output_file = 'setup.json';
 $json_input_file = $options['input'];
 
 if ($json_input_file) {
-	################################################
 	############### read from json #################
 
 	$input = json_decode(file_get_contents($json_input_file)); // make an array
 
-	$start_date = $input->start_date;
-	$end_date = $input->end_date;
-
 	$finances = new Finances;
+
+	$finances->date_start = $input->date_start;
+	$finances->date_end = $input->date_end;
 	
 	# read accounts
 	$accounts = $finances->accounts;
@@ -37,20 +36,66 @@ if ($json_input_file) {
 
 	$finances->set_default_checking_name($input->default_checking);
 
-	# read savings
+	# read portfolio
+	$portfolio = $finances->portfolio;
+	foreach ($input->portfolio as $a) {
+		$holding = $portfolio->add_account($a->name);
+		$holding->set_balance($a->balance);
+		if ($a->checking_name) {
+			$holding->set_checking_name($finances, $a->checking_name);
+		}
+		foreach ($a->transfer_schedule as $t) {
+			$holding->add_transfer($t->amount, $t->date_start, $t->date_end, $t->period, $t->extra);
+		}
+		// some holdings earn interest
+		if ($earning = $a->earning) {
+			$holding->setup_earning($earning->interest_method, $earning->interest_extra);
+			foreach ($earning->apr_schedule as $t) {
+				$holding->add_interest($t->amount, $t->date_start, $t->date_end, $t->period, $t->extra);
+			}
+		}
+	}
+	
 	# read loans
+	$loans = $finances->loans;
+	foreach ($input->loans as $a) {
+		$loan = $loans->add_loan($a->name);
+		$loan->setup_loan($a->interest_method, $a->interest_extra);
+		$loan->set_balance($a->balance);
+		foreach ($a->apr_schedule as $t) {
+			$loan->add_interest($t->amount, $t->date_start, $t->date_end, $t->period, $t->extra);
+		}
+		foreach ($a->payment_schedule as $t) {
+			$loan->add_amount($t->amount, $t->date_start, $t->date_end, $t->period, $t->extra);
+		}
+	}
+
 	# read incomes
+	$income = $finances->income;
+	foreach ($input->income as $a) {
+		$item = $income->add_item($a->name);
+		foreach ($a->schedule as $t) {
+			$item->add_amount($t->amount, $t->date_start, $t->date_end, $t->period, $t->extra);
+		}
+	}
+
 	# read expenses
+	$expenses = $finances->expenses;
+	foreach ($input->expenses as $a) {
+		$item = $expenses->add_item($a->name);
+		foreach ($a->schedule as $t) {
+			$item->add_amount($t->amount, $t->date_start, $t->date_end, $t->period, $t->extra);
+		}
+	}
 
 	//print_r($finances);
 
 } else {
 	#################### setup ####################
 
-	$start_date = '2014-09-05'; // IMPORTANT: if you change this, you must input current balances.
-	$end_date = '2018-01-05'; 
-
 	$finances = new Finances;
+	$finances->set_start_date('2014-09-05'); // IMPORTANT: if you change this, you must input current balances.
+	$finances->set_end_date('2018-01-05'); 
 
 	#################### cash accounts ####################
 
@@ -221,8 +266,11 @@ if ($json_input_file) {
 	}
 }
 
-$date = $start_date;
-while ($date <= $end_date) {
+//print_r($finances);
+//exit;
+
+$date = $finances->date_start;
+while ($date <= $finances->date_end) {
 	$finances->do_daily_finances($date);
 	$finances->print_today();
 	$date = next_day($date);

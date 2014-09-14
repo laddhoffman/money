@@ -12,10 +12,13 @@ class Finances implements JsonSerializable {
 	var $default_checking;
 	var $default_checking_name;
 
+	var $date_start;
+	var $date_end;
+
 	var $today = array();
 	var $date;
 
-	var $columns = array('checking', 'income', 'expenses', 'payments', 'loans', 'save', 'savings', 'net_worth');
+	var $columns = array('checking', 'income', 'expenses', 'payments', 'loans', 'save', 'portfolio', 'net_worth');
 
 	function __construct() {
 		$this->first_day = 0;
@@ -24,6 +27,14 @@ class Finances implements JsonSerializable {
 		$this->loans = new Loans;
 		$this->income = new MoneyItems;
 		$this->expenses = new MoneyItems;
+	}
+
+	function set_start_date($date_start) {
+		$this->date_start = $date_start;
+	}
+
+	function set_end_date($date_end) {
+		$this->date_end = $date_end;
 	}
 
 	function set_default_checking($checking) {
@@ -55,7 +66,7 @@ class Finances implements JsonSerializable {
 		$today['payments'] = $loans->make_all_payments($date);
 		$today['loans'] = $loans->get_all_balances();
 
-		// savings calculations
+		// portfolio calculations
 		$today['invest'] = $portfolio->compute_all_transfers($date, $checking);
 		$today['earn'] = $portfolio->compute_all_interest($date);
 		$today['portfolio'] = $portfolio->get_all_balances();
@@ -127,6 +138,8 @@ class Finances implements JsonSerializable {
 	function jsonSerialize() {
 		// return an array
 		$res = array();
+		$res['date_start'] = $this->date_start;
+		$res['date_end'] = $this->date_end;
 		$res['default_checking'] = $this->default_checking_name;
 		$res['portfolio'] = $this->portfolio->jsonSerialize();
 		$res['accounts'] = $this->accounts->jsonSerialize();
@@ -406,6 +419,8 @@ class Loan extends MoneyItem implements JsonSerializable {
 		if ($debug) {print_r($this);}
 		$res = array();
 		$res['balance'] = $this->get_balance();
+		$res['interest_method'] = $this->interest_method;
+		$res['interest_extra'] = $this->interest_extra;
 		$res['apr_schedule'] = $this->apr_schedule->jsonSerialize();
 		$res['payment_schedule'] = parent::jsonSerialize();
 		return $res;
@@ -475,10 +490,10 @@ class Account implements JsonSerializable {
 }
 
 class Portfolio implements JsonSerializable {
-	// a collection of "savings" accounts which can have earnings
-	var $list = array(); // array of Savings objects
+	// a collection of Holdings, accounts which can have earnings
+	var $list = array(); // array of Holding objects
 	function add_account($name) {
-		$this_account = new Savings();
+		$this_account = new Holding();
 		$this->list[$name] = $this_account;
 		return $this_account;
 	}
@@ -519,9 +534,10 @@ class Portfolio implements JsonSerializable {
 	}
 }
 
-class Savings extends Account implements JsonSerializable {
-	// a savings account can be set up to have a recurring deposit from a checking account
-	// TODO: if needed, set up a way to implement deposits to savings from more than one checking account
+class Holding extends Account implements JsonSerializable {
+	// a holdings account can be set up to have a recurring deposit from a checking account
+	// you can specify from what checking account deposits will be made
+	// todo if necessary, allow deposits to be scheduled separately from each checking account
 	var $checking; // an Account that is the source for this fund
 	var $transfer_schedule; // a MoneyItem object referring to the schedule for transfers from checking savings
 	// a savings account can also interest. In effect this is because you are GIVING a loan.
@@ -530,8 +546,14 @@ class Savings extends Account implements JsonSerializable {
 		$this->transfer_schedule = new MoneyItem;
 		$this->earning = new Loan;
 	}
-	function set_checking($checking) {
-		$this->checking = $checking;
+	function set_checking_name($finances, $checking_name) {
+		// assign checking account by name.
+		foreach ($finances->accounts->list as $name => $checking) {
+			if ($name == $checking_name) {
+				$this->checking = $checking;
+				break;
+			}
+		}
 	}
 	function get_checking() {
 		return $this->checking;
@@ -574,7 +596,7 @@ class Savings extends Account implements JsonSerializable {
 	function jsonSerialize() {
 		$res = array();
 		$res['balance'] = $this->get_balance();
-		$res['checking'] = $this->checking->name;
+		$res['checking_name'] = $this->checking->name;
 		$res['transfer_schedule'] = $this->transfer_schedule->jsonSerialize();
 		if (isset($this->earning->apr_schedule)) {
 			$res['earning'] = $this->earning->jsonSerialize();
