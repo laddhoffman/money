@@ -1,13 +1,30 @@
 {
- "$ref": "schema/Account.json",
+ "$ref": "schema/Account.json?ver=1",
  "properties": {
+  "interest_method": {
+   "title": "Interest Method",
+   "type": "string",
+   "enum": [
+    "monthly"
+   ],
+   "default": "monthly"
+  },
+  "interest_extra": {
+   "title": "Interest Extra",
+   "description": "Date on which interest is computed",
+   "type": "string"
+  },
+  "checking_name": {
+   "title": "Associated Checking Account",
+   "type": "string"
+  },
   "apr_schedule": {
    "title": "APR Schedule",
-   "$ref": "schema/MoneyItem.json"
+   "$ref": "schema/MoneyItem.json?ver=1"
   },
   "payment_schedule": {
    "title": "Payment Schedule",
-   "$ref": "schema/MoneyItem.json"
+   "$ref": "schema/MoneyItem.json?ver=1"
   }
  }
 }

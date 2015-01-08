@@ -2236,7 +2236,6 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
       var orderb = self.editors[b].schema.propertyOrder;
       if(typeof ordera !== "number") ordera = 1000;
       if(typeof orderb !== "number") orderb = 1000;
-      //console.log("1 '%s' (%d) (%s) vs '%s' (%d) (%s)", self.editors[a].schema.title, ordera, typeof ordera, self.editors[b].schema.title, orderb, typeof orderb);
 
       return ordera - orderb;
     });
@@ -2426,7 +2425,6 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
       var orderb = self.editors[b].schema.propertyOrder;
       if(typeof ordera !== "number") ordera = 1000;
       if(typeof orderb !== "number") orderb = 1000;
-      //console.log("2 '%s' (%d) (%s) vs '%s' (%d) (%s)", self.editors[a].schema.title, ordera, typeof ordera, self.editors[b].schema.title, orderb, typeof orderb);
 
       return ordera - orderb;
     });

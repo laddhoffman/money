@@ -2,6 +2,6 @@
  "type": "array",
  "format": "table",
  "items": {
-  "$ref": "schema/ValueInterval.json"
+  "$ref": "schema/ValueInterval.json?ver=1"
  }
 }

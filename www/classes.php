@@ -18,8 +18,6 @@ class Finances implements JsonSerializable {
 	var $today = array();
 	var $date;
 
-	var $columns = array('checking', 'income', 'expenses', 'payments', 'loans', 'save', 'portfolio', 'net_worth');
-
 	function __construct() {
 		$this->first_day = 0;
 		$this->accounts = new Accounts;
@@ -82,51 +80,86 @@ class Finances implements JsonSerializable {
 
 		// save results for display
 		$this->today = $today;
+        return $today;
 	}
-	function print_today() {
+
+	function get_today($print_tsv) {
 		global $print_each_loan;
 		global $print_each_expense;
+		global $print_each_holding;
 		global $print_extra_line;
 		$today = $this->today;
 		$date = $this->date;
-		if ($this->first_day == 0) {
-			$this->first_day = 1;
-			printf("date");
-			foreach ($this->columns as $column) {
-				printf("\t%s", $column);
-			}
-			if ($print_each_loan) {
-				foreach ($this->loans->list as $name => $loan) {
-					printf("\t%s", $name);
-				}
-			}
-			if ($print_each_expense) {
-				foreach ($this->expenses->list as $name => $expense) {
-					printf("\t%s", $name);
-				}
-			}
-			printf("\n");
-		}
-		printf("%s", $date);
-		foreach ($this->columns as $column) {
+	    $columns_totals = array('checking', 'loans', 'portfolio', 'net_worth');
+	    $columns_transactions = array('income', 'expenses', 'payments', 'invest');
+
+        $results = array();
+        if ($print_tsv) {
+		    if ($this->first_day == 0) {
+			    $this->first_day = 1;
+			    printf("date");
+			    foreach ($this->columns as $column) {
+				    printf("\t%s", $column);
+			    }
+			    if ($print_each_loan) {
+				    foreach ($this->loans->list as $name => $loan) {
+					    printf("\t%s", $name);
+				    }
+			    }
+			    if ($print_each_expense) {
+				    foreach ($this->expenses->list as $name => $expense) {
+					    printf("\t%s", $name);
+				    }
+			    }
+			    if ($print_each_holding) {
+				    foreach ($this->portfolio->list as $name => $holding) {
+					    printf("\t%s", $name);
+				    }
+			    }
+			    printf("\n");
+		    }
+        }
+		if ($print_tsv) printf("%s", $date);
+		foreach ($columns_totals as $column) {
 			$value = $today[$column];
-			printf("\t%.2f", $value);
+			if ($print_tsv) printf("\t%.2f", $value);
+            $results['totals'][$column] = $value;
+		}
+		if ($print_tsv) printf("%s", $date);
+		foreach ($columns_transactions as $column) {
+			$value = $today[$column];
+			if ($print_tsv) printf("\t%.2f", $value);
+            $results['transactions'][$column] = $value;
 		}
 		if ($print_each_loan) {
 			foreach ($this->loans->list as $name => $loan) {
-				printf("\t%.2f", $loan->get_balance());
+                $balance = $loan->get_balance();
+				if ($print_tsv) printf("\t%.2f", $balance);
+                $results['each_loan'][$name] = $balance;
 			}
 		}
 		if ($print_each_expense) {
 			foreach ($this->expenses->list as $name => $expense) {
-				printf("\t%.2f", $expense->get_amount($date));
+                $amount = $expense->get_amount($date);
+				if ($print_tsv) printf("\t%.2f", $amount);
+                $results['each_expense'][$name] = $amount;
 			}
 		}
-		printf("\n");
-		if ($print_extra_line) {
-			printf("\n");
+		if ($print_each_holding) {
+			foreach ($this->portfolio->list as $name => $holding) {
+                $amount = $holding->earning->get_amount($date);
+				if ($print_tsv) printf("\t%.2f", $amount);
+                $results['each_holding'][$name] = $amount;
+			}
 		}
+		if ($print_tsv) printf("\n");
+		if ($print_extra_line) {
+			if ($print_tsv) printf("\n");
+		}
+
+        return $results;
 	}
+
 	function get_net_worth() {
 		$money = 0;
 		$money += $this->accounts->get_all_balances();
@@ -539,6 +572,7 @@ class Holding extends Account implements JsonSerializable {
 	// you can specify from what checking account deposits will be made
 	// todo if necessary, allow deposits to be scheduled separately from each checking account
 	var $checking; // an Account that is the source for this fund
+    var $checking_name;
 	var $transfer_schedule; // a MoneyItem object referring to the schedule for transfers from checking savings
 	// a savings account can also interest. In effect this is because you are GIVING a loan.
 	var $earning; // a Loan object
@@ -551,6 +585,7 @@ class Holding extends Account implements JsonSerializable {
 		foreach ($finances->accounts->list as $name => $checking) {
 			if ($name == $checking_name) {
 				$this->checking = $checking;
+                $this->checking_name = $checking_name;
 				break;
 			}
 		}

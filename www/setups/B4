@@ -1,7 +1,7 @@
 {
  "name": "B4",
- "start_date": "",
- "end_date": "",
+ "start_date": "2014-01-01",
+ "end_date": "2015-01-02",
  "default_checking": "checking",
  "accounts": [
   {
@@ -37,6 +37,9 @@
  ],
  "portfolio": [
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [],
    "payment_schedule": [
     {
@@ -51,6 +54,9 @@
    "balance": 8106.76
   },
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [],
    "payment_schedule": [
     {
@@ -67,6 +73,9 @@
  ],
  "loans": [
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [
     {
      "amount": 0.899999,
@@ -89,6 +98,9 @@
    "balance": 12102.98
   },
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [
     {
      "amount": 6.8,
@@ -111,6 +123,9 @@
    "balance": 8300
   },
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [
     {
      "amount": 5.6,
@@ -133,6 +148,9 @@
    "balance": 5171.64
   },
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [
     {
      "amount": 5.35,
@@ -155,6 +173,9 @@
    "balance": 3134.28
   },
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [
     {
      "amount": 3,
@@ -177,6 +198,9 @@
    "balance": 5011.12
   },
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [
     {
      "amount": 2.875,
@@ -199,6 +223,9 @@
    "balance": 11058.1
   },
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [
     {
      "amount": 12.99,
@@ -221,6 +248,9 @@
    "balance": 1624.2
   },
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [],
    "payment_schedule": [
     {
@@ -235,6 +265,9 @@
    "balance": 1808.44
   },
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [
     {
      "amount": 17.24,
@@ -257,6 +290,9 @@
    "balance": 72.74
   },
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [],
    "payment_schedule": [
     {
@@ -271,6 +307,9 @@
    "balance": 2603.92
   },
   {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
    "apr_schedule": [],
    "payment_schedule": [
     {

@@ -8,7 +8,7 @@
     "type": "string"
    },
    "schedule": {
-     "$ref": "schema/MoneyItem.json"
+     "$ref": "schema/MoneyItem.json?ver=1"
    }
   }
  }

@@ -2,8 +2,7 @@
  "type": "array",
  "format": "table",
  "title": "Loans",
- "uniqueItems": true,
  "items": {
-  "$ref": "schema/Loan.json"
+  "$ref": "schema/Loan.json?ver=1"
  }
 }

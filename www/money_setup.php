@@ -1,7 +1,8 @@
 <?php
 
-/* Build an array of each setup described in saved/ */
-$save_dir = 'saved';
+
+/* Build an array of each setup described in setups/ */
+$save_dir = 'setups';
 $files = scandir($save_dir);
 $setups = array();
 foreach ($files as $file) {
@@ -42,8 +43,9 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 </head>
 <body>
     <div id='submit_status'></div>
-    <button id='submit'>Submit</button>
-    <button id='restore'>Restore to Default</button>
+    <button id='submit'>Save</button>
+    <button id='compute'>Compute</button>
+    <button id='restore'>Revert to Saved</button>
     <button id='enable_disable'>Disable/Enable Form</button>
     <span id='valid_indicator'></span>
     
@@ -64,8 +66,8 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
         // Use a CSS theme
         //theme: 'foundation5',
         theme: 'bootstrap3',
-        iconlib: "bootstrap3",
-        //iconlib: "fontawesome4",
+        iconlib: 'bootstrap3',
+        //iconlib: 'fontawesome4',
         
         // The schema for the editor
 
@@ -79,7 +81,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
           items: {
             // title: "Financial Setup",
             headerTemplate: "{{self.name}}",
-            $ref: "schema/Setup.json"
+            $ref: "schema/Setup.json?ver=1"
           }
         },
         
@@ -92,9 +94,8 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
         // Require all properties by default
         required_by_default: true
       });
-      
-      // Hook up the submit button
-      document.getElementById('submit').addEventListener('click',function() {
+
+      function save_all() {
         // Get the value from the editor
         // console.log(editor.getValue());
         setups = editor.getValue()
@@ -109,9 +110,9 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
           } else {// code for IE6, IE5
               xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
           }
-          console.log("opening ajax connection");
+          // console.log("opening ajax connection");
           xmlhttp.open("POST", "save_file.php", false);
-          xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+          xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
           string_to_send = '';
           string_to_send += 'filename='+encodeURIComponent(filename);
           string_to_send += '&content='+encodeURIComponent(content_string);
@@ -121,6 +122,45 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
           console.log(result);
           document.getElementById('submit_status').innerHTML = result.message;
         });
+
+      }
+      
+      // Hook up the submit button
+      document.getElementById('submit').addEventListener('click',function() {
+        save_all();
+      });
+
+      // Hook up the Compute button
+      document.getElementById('compute').addEventListener('click',function() {
+        // Let's see what info we have available
+        // console.log(editor.editors.root.active_tab.innerText);
+        // Nailed it
+        var filename = editor.editors.root.active_tab.innerText;
+        // save first
+        save_all();
+
+
+        // now call the script to perform the calculations
+        var xmlhttp;
+        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+          xmlhttp=new XMLHttpRequest();
+        } else {// code for IE6, IE5
+          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+
+          // console.log("opening ajax connection");
+          xmlhttp.open("POST", "overview.php", false);
+          xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+          var string_to_send = '';
+          string_to_send += 'input_file='+encodeURIComponent(filename);
+          // console.log(string_to_send);
+          xmlhttp.send(string_to_send);
+
+          var result = JSON.parse(xmlhttp.responseText);
+          console.log(result);
+
+
       });
       
       // Hook up the Restore to Default button
