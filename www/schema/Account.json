@@ -3,12 +3,14 @@
    "properties": {
     "name": {
      "title": "Account Name",
-     "type": "string"
+     "type": "string",
+     "propertyOrder": 100
     },
     "balance": {
      "title": "Balance",
      "type": "number",
-     "default": "0.00"
+     "default": "0.00",
+     "propertyOrder": 200
     }
    }
 }

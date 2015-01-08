@@ -1,0 +1,431 @@
+[
+    {
+        "Name": "AAAAAAA",
+        "accounts": [
+            {
+                "balance": 2799.6,
+                "name": "checking"
+            }
+        ],
+        "default_checking": "checking",
+        "end_date": "",
+        "expenses": [
+            {
+                "name": "rent",
+                "schedule": [
+                    {
+                        "amount": 975,
+                        "date_end": "2014-11-01",
+                        "date_start": "2013-11-01",
+                        "extra": "2013-11-01",
+                        "period": "monthly"
+                    },
+                    {
+                        "amount": 1000,
+                        "date_end": "2015-11-01",
+                        "date_start": "2014-11-01",
+                        "extra": "2013-11-01",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "name": "electricity",
+                "schedule": [
+                    {
+                        "amount": 80,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-15",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "name": "food",
+                "schedule": [
+                    {
+                        "amount": 250,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "sunday",
+                        "period": "weekly"
+                    }
+                ]
+            },
+            {
+                "name": "pets",
+                "schedule": [
+                    {
+                        "amount": 200,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-20",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "name": "acupuncture",
+                "schedule": [
+                    {
+                        "amount": 85,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "saturday",
+                        "period": "weekly"
+                    }
+                ]
+            },
+            {
+                "name": "medicine",
+                "schedule": [
+                    {
+                        "amount": 20,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "saturday",
+                        "period": "weekly"
+                    }
+                ]
+            },
+            {
+                "name": "jcc",
+                "schedule": [
+                    {
+                        "amount": 55,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-15",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "name": "chiropractor",
+                "schedule": [
+                    {
+                        "amount": 49,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-15",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "name": "gas",
+                "schedule": [
+                    {
+                        "amount": 60,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "monday",
+                        "period": "weekly"
+                    }
+                ]
+            },
+            {
+                "name": "registration",
+                "schedule": [
+                    {
+                        "amount": 100,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-02-01",
+                        "period": "annual"
+                    }
+                ]
+            },
+            {
+                "name": "insurance",
+                "schedule": [
+                    {
+                        "amount": 1000,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "june 1",
+                        "period": "semiannual"
+                    }
+                ]
+            }
+        ],
+        "income": [
+            {
+                "name": "Ladd",
+                "schedule": [
+                    {
+                        "amount": 2500,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-09-05",
+                        "period": "biweekly"
+                    }
+                ]
+            },
+            {
+                "name": "Jaymie",
+                "schedule": [
+                    {
+                        "amount": 2100,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-09-12",
+                        "period": "biweekly"
+                    }
+                ]
+            }
+        ],
+        "loans": [
+            {
+                "apr_schedule": [
+                    {
+                        "amount": 0.899999,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "",
+                        "period": "weekly"
+                    }
+                ],
+                "balance": 12102.98,
+                "name": "civic",
+                "payment_schedule": [
+                    {
+                        "amount": 408.15,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-04",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "apr_schedule": [
+                    {
+                        "amount": 6.8,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "",
+                        "period": "weekly"
+                    }
+                ],
+                "balance": 8300,
+                "name": "nelnet 999-B-1",
+                "payment_schedule": [
+                    {
+                        "amount": 95.57,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-10",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "apr_schedule": [
+                    {
+                        "amount": 5.6,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "",
+                        "period": "weekly"
+                    }
+                ],
+                "balance": 5171.64,
+                "name": "nelnet 999-A-0",
+                "payment_schedule": [
+                    {
+                        "amount": 11.56,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-10",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "apr_schedule": [
+                    {
+                        "amount": 5.35,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "",
+                        "period": "weekly"
+                    }
+                ],
+                "balance": 3134.28,
+                "name": "nelnet 181-A-0",
+                "payment_schedule": [
+                    {
+                        "amount": 40.76,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-12",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "apr_schedule": [
+                    {
+                        "amount": 3,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "",
+                        "period": "weekly"
+                    }
+                ],
+                "balance": 5011.12,
+                "name": "sallie mae 1",
+                "payment_schedule": [
+                    {
+                        "amount": 100,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-10",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "apr_schedule": [
+                    {
+                        "amount": 2.875,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "",
+                        "period": "weekly"
+                    }
+                ],
+                "balance": 11058.1,
+                "name": "sallie mae 2",
+                "payment_schedule": [
+                    {
+                        "amount": 200,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-10",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "apr_schedule": [
+                    {
+                        "amount": 12.99,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "",
+                        "period": "weekly"
+                    }
+                ],
+                "balance": 1624.2,
+                "name": "freedom",
+                "payment_schedule": [
+                    {
+                        "amount": 2000,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-20",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "apr_schedule": [],
+                "balance": 1808.44,
+                "name": "citi",
+                "payment_schedule": [
+                    {
+                        "amount": 500,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-20",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "apr_schedule": [
+                    {
+                        "amount": 17.24,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "",
+                        "period": "weekly"
+                    }
+                ],
+                "balance": 72.74,
+                "name": "amex",
+                "payment_schedule": [
+                    {
+                        "amount": 500,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-20",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "apr_schedule": [],
+                "balance": 2603.92,
+                "name": "mattress",
+                "payment_schedule": [
+                    {
+                        "amount": 56.69,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-13",
+                        "period": "monthly"
+                    }
+                ]
+            },
+            {
+                "apr_schedule": [],
+                "balance": 389.19,
+                "name": "nordstrom",
+                "payment_schedule": [
+                    {
+                        "amount": 100,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-01-10",
+                        "period": "monthly"
+                    }
+                ]
+            }
+        ],
+        "portfolio": [
+            {
+                "balance": 8106.76,
+                "name": "savings",
+                "apr_schedule": [],
+                "payment_schedule": [
+                    {
+                        "amount": 400,
+                        "date_end": "0",
+                        "date_start": "0",
+                        "extra": "2014-10-03",
+                        "period": "weekly"
+                    }
+                ]
+            },
+            {
+                "balance": 0,
+                "name": "401k",
+                "apr_schedule": [],
+                "payment_schedule": [
+                    {
+                        "amount": 500,
+                        "date_end": "0",
+                        "date_start": "2014-12-01",
+                        "extra": "2014-12-01",
+                        "period": "monthly"
+                    }
+                ]
+            }
+        ],
+        "start_date": ""
+    }
+]

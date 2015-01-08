@@ -1,19 +1,20 @@
 <?php
 
-$filename = "saved_data.json";
+$file_name = $_POST['filename'];
 $content = $_POST['content'];
-$file = fopen($filename, "w");
+$file_path = "saved/$file_name";
+$file = fopen($file_path, "w");
 if (!$file) {
     $ret['code'] = -1;
-    $ret['message'] = "could not open file '$filename'";
+    $ret['message'] = "could not open file '$file_path'";
     echo json_encode($ret);
-    exit;
+    exit(1);
 }
 fwrite($file, $content);
 fclose($file);
 $ret['code'] = 0;
 $ret['message'] = "success";
-$ret['filename'] = "$filename";
+$ret['filename'] = "$file_name";
 $ret['content'] = "$content";
 echo json_encode($ret);
-exit;
+exit(0);
