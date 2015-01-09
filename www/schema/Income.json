@@ -1,4 +1,4 @@
 {
  "title": "Income",
- "$ref": "schema/MoneyItems.json?ver=2"
+ "$ref": "schema/MoneyItems.json?ver=5"
 }

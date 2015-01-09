@@ -6,13 +6,11 @@
   },
   "date_start": {
    "title": "Start Date",
-   "type": "string",
-   "format": "date"
+   "type": "string"
   },
   "date_end": {
    "title": "End Date",
-   "type": "string",
-   "format": "date"
+   "type": "string"
   },
   "period": {
    "title": "Period",
@@ -28,8 +26,7 @@
   },
   "extra": {
    "title": "Key Date",
-   "type": "string",
-   "format": "date"
+   "type": "string"
   }
  }
 }

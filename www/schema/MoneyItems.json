@@ -1,14 +1,15 @@
 {
  "type": "array",
- "format": "table",
+ "format": "tabs",
  "items": {
   "type": "object",
+  "headerTemplate": "{{ self.name }}",
   "properties": {
    "name": {
     "type": "string"
    },
    "schedule": {
-     "$ref": "schema/MoneyItem.json?ver=2"
+     "$ref": "schema/MoneyItem.json?ver=5"
    }
   }
  }

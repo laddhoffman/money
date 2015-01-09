@@ -1,9 +1,9 @@
 {
  "type": "array",
- "format": "table",
+ "format": "tabs",
  "title": "Portfolio",
  "uniqueItems": true,
  "items": {
-  "$ref": "schema/Loan.json?ver=2"
+  "$ref": "schema/Loan.json?ver=5"
  }
 }

@@ -1,5 +1,6 @@
 {
    "type": "object",
+   "headerTemplate": "{{ self.name }}",
    "properties": {
     "name": {
      "title": "Account Name",

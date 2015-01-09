@@ -35,7 +35,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 <!-- <script src='/bootstrap3/dist/js/bootstrap.js'> -->
 
 <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
-<!-- <link rel='stylesheet' href='/font-awesome-4.2.0/css/font-awesome.css'> -->
+<link rel='stylesheet' href='/font-awesome-4.2.0/css/font-awesome.css'> 
 
 <!-- JSON Editor -->
 <script src='jsoneditor.js'></script>
@@ -66,10 +66,10 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
         ajax: true,
 
         // Use a CSS theme
-        //theme: 'foundation5',
+        // theme: 'foundation5',
         theme: 'bootstrap3',
-        iconlib: 'bootstrap3',
-        //iconlib: 'fontawesome4',
+        // iconlib: 'bootstrap3',
+        // iconlib: 'fontawesome4',
         
         // The schema for the editor
 
@@ -83,7 +83,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
           items: {
             // title: "Financial Setup",
             headerTemplate: "{{self.name}}",
-            $ref: "schema/Setup.json?ver=1"
+            $ref: "schema/Setup.json?ver=5"
           }
         },
         

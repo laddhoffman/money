@@ -3,6 +3,6 @@
  "format": "tabs",
  "title": "Loans",
  "items": {
-  "$ref": "schema/Loan.json?ver=2"
+  "$ref": "schema/Loan.json?ver=5"
  }
 }

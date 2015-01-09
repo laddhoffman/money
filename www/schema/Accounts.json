@@ -1,9 +1,9 @@
 {
  "type": "array",
- "format": "table",
+ "format": "tabs",
  "title": "Checking Accounts",
  "uniqueItems": true,
  "items": {
-  "$ref": "schema/Account.json?ver=2"
+  "$ref": "schema/Account.json?ver=5"
  }
 }
