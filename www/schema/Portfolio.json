@@ -4,6 +4,6 @@
  "title": "Portfolio",
  "uniqueItems": true,
  "items": {
-  "$ref": "schema/Loan.json?ver=1"
+  "$ref": "schema/Loan.json?ver=2"
  }
 }

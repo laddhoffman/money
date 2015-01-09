@@ -1,5 +1,5 @@
 {
- "$ref": "schema/Account.json?ver=1",
+ "$ref": "schema/Account.json?ver=2",
  "properties": {
   "interest_method": {
    "title": "Interest Method",
@@ -20,11 +20,11 @@
   },
   "apr_schedule": {
    "title": "APR Schedule",
-   "$ref": "schema/MoneyItem.json?ver=1"
+   "$ref": "schema/MoneyItem.json?ver=2"
   },
   "payment_schedule": {
    "title": "Payment Schedule",
-   "$ref": "schema/MoneyItem.json?ver=1"
+   "$ref": "schema/MoneyItem.json?ver=2"
   }
  }
 }

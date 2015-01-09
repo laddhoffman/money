@@ -1,9 +1,9 @@
 {
- "$ref": "schema/Account.json?ver=1",
+ "$ref": "schema/Account.json?ver=2",
  "properties": {
   "transfer_schedule": {
    "title": "Transfer Schedule",
-   "$ref": "schema/MoneyItem.json?ver=1"
+   "$ref": "schema/MoneyItem.json?ver=2"
   }
  }
 }

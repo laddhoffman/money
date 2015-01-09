@@ -43,10 +43,12 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 </head>
 <body>
     <div id='submit_status'></div>
+    <button id='clear_result' style='visibility:hidden'>Clear Result</button><br>
+    <div id='result'></div>
     <button id='submit'>Save</button>
     <button id='compute'>Compute</button>
     <button id='restore'>Revert to Saved</button>
-    <button id='enable_disable'>Disable/Enable Form</button>
+    <!-- <button id='enable_disable'>Disable/Enable Form</button> -->
     <span id='valid_indicator'></span>
     
     <div id='editor_holder'></div>
@@ -160,15 +162,22 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
           var result = JSON.parse(xmlhttp.responseText);
           console.log(result);
 
-
+          document.getElementById('result').innerHTML = '<pre>'+JSON.stringify(result, null, 1)+'</pre>';
+          document.getElementById('clear_result').style.visibility = 'visible';
+          
       });
       
+      document.getElementById('clear_result').addEventListener('click',function() {
+          document.getElementById('result').innerHTML = '';
+          document.getElementById('clear_result').style.visibility = 'hidden';
+      });
       // Hook up the Restore to Default button
       document.getElementById('restore').addEventListener('click',function() {
         editor.setValue(starting_value);
       });
       
       // Hook up the enable/disable button
+        /*
       document.getElementById('enable_disable').addEventListener('click',function() {
         // Enable form
         if(!editor.isEnabled()) {
@@ -179,6 +188,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
           editor.disable();
         }
       });
+        */
       
       // Hook up the validation indicator to update its 
       // status whenever the editor changes

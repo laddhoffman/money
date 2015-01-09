@@ -13,7 +13,7 @@ if (!$file) {
 fwrite($file, $content);
 fclose($file);
 $ret['code'] = 0;
-$ret['message'] = "success";
+$ret['message'] = "saved successfully";
 $ret['filename'] = "$file_name";
 $ret['content'] = "$content";
 echo json_encode($ret);

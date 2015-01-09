@@ -4,6 +4,6 @@
  "title": "Checking Accounts",
  "uniqueItems": true,
  "items": {
-  "$ref": "schema/Account.json?ver=1"
+  "$ref": "schema/Account.json?ver=2"
  }
 }
