@@ -51,6 +51,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
     <!-- <button id='enable_disable'>Disable/Enable Form</button> -->
     <span id='valid_indicator'></span>
     
+    <div id='editor_status'>Loading...</div>
     <div id='editor_holder'></div>
 
     
@@ -103,6 +104,13 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
         setups = editor.getValue()
         setups.forEach(function(setup) {
           filename = setup.name;
+    /*
+          if (!filename) {
+            message = "need a name for setup '" + setup.title + "'!";
+            document.getElementById('submit_status').innerHTML += message + '<br>';
+            continue;
+          )
+    */
           content_string = JSON.stringify(setup, null, 1);
           console.dir(JSON.parse(content_string));
           // POST the data to be saved to a file
@@ -122,11 +130,17 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
           xmlhttp.send(string_to_send);
           var result = JSON.parse(xmlhttp.responseText);
           console.log(result);
-          document.getElementById('submit_status').innerHTML = result.message;
+          document.getElementById('submit_status').innerHTML += result.message + '<br>';
         });
 
       }
+
+      // Hook up the editor status indicator
+      editor.on('ready',function() {
+        document.getElementById('editor_status').innerHTML = '';
+      });
       
+
       // Hook up the submit button
       document.getElementById('submit').addEventListener('click',function() {
         save_all();
@@ -201,12 +215,12 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
         // Not valid
         if(errors.length) {
           indicator.style.color = 'red';
-          indicator.textContent = "not valid";
+          indicator.textContent = "invalid input";
         }
         // Valid
         else {
           indicator.style.color = 'green';
-          indicator.textContent = "valid";
+          indicator.textContent = "valid input";
         }
       });
     </script>

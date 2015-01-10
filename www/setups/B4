@@ -1,7 +1,7 @@
 {
  "name": "B4",
- "start_date": "2014-02-01",
- "end_date": "2015-01-02",
+ "date_start": "2014-02-01",
+ "date_end": "2015-01-02",
  "default_checking": "checking",
  "accounts": [
   {
@@ -15,8 +15,8 @@
    "schedule": [
     {
      "amount": 2500,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "biweekly",
      "extra": "2014-09-05"
     }
@@ -27,8 +27,8 @@
    "schedule": [
     {
      "amount": 2100,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "biweekly",
      "extra": "2014-09-12"
     }
@@ -44,8 +44,8 @@
    "payment_schedule": [
     {
      "amount": 400,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": "2014-10-03"
     }
@@ -62,7 +62,7 @@
     {
      "amount": 500,
      "date_start": "2014-12-01",
-     "date_end": "0",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-12-01"
     }
@@ -79,8 +79,8 @@
    "apr_schedule": [
     {
      "amount": 0.899999,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": ""
     }
@@ -88,8 +88,8 @@
    "payment_schedule": [
     {
      "amount": 408.15,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-04"
     }
@@ -104,8 +104,8 @@
    "apr_schedule": [
     {
      "amount": 6.8,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": ""
     }
@@ -113,8 +113,8 @@
    "payment_schedule": [
     {
      "amount": 95.57,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-10"
     }
@@ -129,8 +129,8 @@
    "apr_schedule": [
     {
      "amount": 5.6,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": ""
     }
@@ -138,8 +138,8 @@
    "payment_schedule": [
     {
      "amount": 11.56,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-10"
     }
@@ -154,8 +154,8 @@
    "apr_schedule": [
     {
      "amount": 5.35,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": ""
     }
@@ -163,8 +163,8 @@
    "payment_schedule": [
     {
      "amount": 40.76,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-12"
     }
@@ -179,8 +179,8 @@
    "apr_schedule": [
     {
      "amount": 3,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": ""
     }
@@ -188,8 +188,8 @@
    "payment_schedule": [
     {
      "amount": 100,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-10"
     }
@@ -204,8 +204,8 @@
    "apr_schedule": [
     {
      "amount": 2.875,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": ""
     }
@@ -213,8 +213,8 @@
    "payment_schedule": [
     {
      "amount": 200,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-10"
     }
@@ -229,8 +229,8 @@
    "apr_schedule": [
     {
      "amount": 12.99,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": ""
     }
@@ -238,8 +238,8 @@
    "payment_schedule": [
     {
      "amount": 2000,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-20"
     }
@@ -255,8 +255,8 @@
    "payment_schedule": [
     {
      "amount": 500,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-20"
     }
@@ -271,8 +271,8 @@
    "apr_schedule": [
     {
      "amount": 17.24,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": ""
     }
@@ -280,8 +280,8 @@
    "payment_schedule": [
     {
      "amount": 500,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-20"
     }
@@ -297,8 +297,8 @@
    "payment_schedule": [
     {
      "amount": 56.69,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-13"
     }
@@ -314,8 +314,8 @@
    "payment_schedule": [
     {
      "amount": 100,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-10"
     }
@@ -349,8 +349,8 @@
    "schedule": [
     {
      "amount": 80,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-15"
     }
@@ -361,8 +361,8 @@
    "schedule": [
     {
      "amount": 250,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": "sunday"
     }
@@ -373,8 +373,8 @@
    "schedule": [
     {
      "amount": 200,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-20"
     }
@@ -385,8 +385,8 @@
    "schedule": [
     {
      "amount": 85,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": "saturday"
     }
@@ -397,8 +397,8 @@
    "schedule": [
     {
      "amount": 20,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": "saturday"
     }
@@ -409,8 +409,8 @@
    "schedule": [
     {
      "amount": 55,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-15"
     }
@@ -421,8 +421,8 @@
    "schedule": [
     {
      "amount": 49,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "monthly",
      "extra": "2014-01-15"
     }
@@ -433,8 +433,8 @@
    "schedule": [
     {
      "amount": 60,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "weekly",
      "extra": "monday"
     }
@@ -445,8 +445,8 @@
    "schedule": [
     {
      "amount": 100,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "annual",
      "extra": "2014-02-01"
     }
@@ -457,8 +457,8 @@
    "schedule": [
     {
      "amount": 1000,
-     "date_start": "0",
-     "date_end": "0",
+     "date_start": "",
+     "date_end": "",
      "period": "semiannual",
      "extra": "june 1"
     }

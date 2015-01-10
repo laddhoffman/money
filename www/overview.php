@@ -34,8 +34,8 @@ $input = json_decode(file_get_contents('setups/'.$json_input_file)); // make an 
 
 $finances = new Finances;
 
-$finances->date_start = $input->start_date;
-$finances->date_end = $input->end_date;
+$finances->date_start = $input->date_start;
+$finances->date_end = $input->date_end;
     
 # read accounts
 $accounts = $finances->accounts;

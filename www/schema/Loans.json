@@ -1,7 +1,6 @@
 {
  "type": "array",
  "format": "tabs",
- "title": "Loans",
  "items": {
   "$ref": "schema/Loan.json?ver=5"
  }

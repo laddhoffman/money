@@ -1,4 +1,3 @@
 {
- "title": "Expenses",
  "$ref": "schema/MoneyItems.json?ver=5"
 }

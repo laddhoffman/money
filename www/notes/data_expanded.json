@@ -7,7 +7,7 @@
             }
         ],
         "default_checking": "checking",
-        "end_date": "",
+        "date_end": "",
         "expenses": [
             {
                 "name": "rent",
@@ -425,5 +425,5 @@
                 ]
             }
         ],
-        "start_date": ""
+        "date_start": ""
     }
