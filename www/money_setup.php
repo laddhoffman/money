@@ -17,7 +17,6 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 // echo $initial_data."\n";
 // exit;
 ?>
-
 <html>
 <head>
 <title>Laddtropia - Finance JSON Editor</title>

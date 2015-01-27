@@ -7,6 +7,10 @@
   {
    "name": "checking",
    "balance": 2799.6
+  },
+  {
+   "name": "",
+   "balance": 0
   }
  ],
  "income": [
@@ -19,6 +23,13 @@
      "date_end": "",
      "period": "biweekly",
      "extra": "2014-09-05"
+    },
+    {
+     "amount": 0,
+     "date_start": "",
+     "date_end": "",
+     "period": "biweekly",
+     "extra": ""
     }
    ]
   },
@@ -40,7 +51,15 @@
    "interest_method": "monthly",
    "interest_extra": "",
    "checking_name": "",
-   "apr_schedule": [],
+   "apr_schedule": [
+    {
+     "amount": 0,
+     "date_start": "",
+     "date_end": "",
+     "period": "biweekly",
+     "extra": ""
+    }
+   ],
    "payment_schedule": [
     {
      "amount": 400,
@@ -68,6 +87,15 @@
     }
    ],
    "name": "401k",
+   "balance": 0
+  },
+  {
+   "interest_method": "monthly",
+   "interest_extra": "",
+   "checking_name": "",
+   "apr_schedule": [],
+   "payment_schedule": [],
+   "name": "",
    "balance": 0
   }
  ],
