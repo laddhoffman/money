@@ -40,7 +40,14 @@ if (!$json_input_file) {
 
 ############### read from json #################
 
-$input = json_decode(file_get_contents('setups/'.$json_input_file)); // make an object
+if (isset($_SERVER['REMOTE_USER'])) {
+	$user = $_SERVER['REMOTE_USER'];
+} else {
+	$user = 'guest';
+}
+$json_input_path = "setups/$user/$json_input_file";
+
+$input = json_decode(file_get_contents($json_input_path)); // make an object
 
 $finances = new Finances;
 

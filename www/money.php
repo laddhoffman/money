@@ -1,8 +1,13 @@
 <?php
 
+if (isset($_SERVER['REMOTE_USER'])) {
+	$user = $_SERVER['REMOTE_USER'];
+} else {
+	$user = 'guest';
+}
 
 /* Build an array of each setup described in setups/ */
-$save_dir = 'setups';
+$save_dir = "setups/$user";
 $files = scandir($save_dir);
 $setups = array();
 foreach ($files as $file) {

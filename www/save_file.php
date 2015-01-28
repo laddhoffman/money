@@ -2,7 +2,13 @@
 
 $file_name = $_POST['filename'];
 $content = $_POST['content'];
-$file_path = "setups/$file_name";
+if (isset($_SERVER['REMOTE_USER'])) {
+	$user = $_SERVER['REMOTE_USER'];
+} else {
+	$user = 'guest';
+}
+$file_path = "setups/$user/$file_name";
+mkdir(dirname($file_path), 0700, true);
 $file = fopen($file_path, "w");
 if (!$file) {
     $ret['status'] = -1;
