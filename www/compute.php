@@ -22,9 +22,19 @@ $print_each_expense = true;
 $print_each_holding = true;
 $print_extra_line = false;
 
+class Result {
+    var $status;
+    var $message;
+    var $data = array();
+}
+
+$result = new Result();
 
 if (!$json_input_file) {
     // need to read from json input file
+    $result->status = -1;
+    $result->message = "no input file specified";
+    echo json_encode($results);
     exit(1);
 }
 
@@ -103,19 +113,26 @@ foreach ($input->expenses as $a) {
 
 $date = $finances->date_start;
 $n = 0;
-$results = array();
+
 while ($date <= $finances->date_end) {
-    $finances->do_daily_finances($date);
-    $today = $finances->get_today(false);
-    // print_r($today);
-    $row = array_merge(array('date' => $date), $today);
-    array_push($results, $row);
-    if (++$n >= 2) {
+    $row = array();
+    try {
+        $finances->do_daily_finances($date);
+    } catch (Exception $e) {
+        $result->status = -1;
+        $result->message = $e->getMessage();
         break;
     }
+    $today = $finances->get_today(false);
+
+    $row['date'] = $date;
+    $row = array_merge($row, $today);
+
+    array_push($result->data, $row);
+
     $date = next_day($date);
 }
 
-$results_json = json_encode($results);
-echo "$results_json";
+echo json_encode($result, JSON_PRETTY_PRINT);
+
 ?>

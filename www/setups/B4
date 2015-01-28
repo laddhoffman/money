@@ -1,16 +1,12 @@
 {
  "name": "B4",
- "date_start": "2014-02-01",
- "date_end": "2015-01-02",
+ "date_start": "2015-02-01",
+ "date_end": "2016-08-02",
  "default_checking": "checking",
  "accounts": [
   {
    "name": "checking",
    "balance": 2799.6
-  },
-  {
-   "name": "",
-   "balance": 0
   }
  ],
  "income": [
@@ -23,13 +19,6 @@
      "date_end": "",
      "period": "biweekly",
      "extra": "2014-09-05"
-    },
-    {
-     "amount": 0,
-     "date_start": "",
-     "date_end": "",
-     "period": "biweekly",
-     "extra": ""
     }
    ]
   },
