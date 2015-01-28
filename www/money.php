@@ -103,6 +103,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
             
             // ====================== validators ========================
 
+/* Some date fields accept free-form dates
                 // Custom validators must return an array of errors or an empty array if valid
                 JSONEditor.defaults.custom_validators.push(function(schema, value, path) {
                   var errors = [];
@@ -118,6 +119,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                   }
                   return errors;
                 });
+*/
 
 
 
