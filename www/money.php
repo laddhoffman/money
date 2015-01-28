@@ -252,8 +252,8 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                             text: "Financial Projections",
                             fontSize: 20
                         },
-			exportFileName: "financial_projections_" + name,
-			exportEnabled: true,
+			            exportFileName: "financial_projections_" + name,
+			            exportEnabled: true,
                         axisY:{
                             gridThickness: 1,
                         },
@@ -372,6 +372,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                 if(errors.length) {
                     indicator.style.color = 'red';
                     indicator.textContent = "invalid input";
+                    console.log(errors);
                 }
                 // Valid
                 else {
