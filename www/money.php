@@ -42,18 +42,11 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 <!-- CanvasJS charting library -->
 <script src='canvasjs.min.js'></script>
 
-<style>
-ul.line-legend {
-    border: 1px black solid;
-    float: left;
-}
-</style>
-
 </head>
 <body>
-        <button id='result_clear' style='visibility:hidden'>Clear Result</button><br>
         <div id='status'></div>
         <div id='result'></div>
+        <button id='result_clear' style='visibility:hidden'>Clear Result</button><br>
         <button id='save_all'>Save All</button>
         <button id='compute'>Compute</button>
         <button id='restore'>Revert to Saved</button>
@@ -207,6 +200,10 @@ ul.line-legend {
                     // Produce a CanvasJS chart
 
                     data_canvasjs = {
+                        title:{
+                            text: "Financial Projections",
+                            fontSize: 20
+                        },
                         axisY:{
                             gridThickness: 1,
                         },
@@ -216,7 +213,6 @@ ul.line-legend {
                         legend:{
                             fontSize: 20,
                             fontFamily: "tamoha",
-                            // fontColor: "Sienna"      
                         },
                         data: [
                             {        
