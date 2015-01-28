@@ -10,11 +10,13 @@
   "date_start": {
    "title": "Start Date",
    "type": "string",
+   "format": "mydate",
    "description": "Date from which to begin projection. Note that account balances should be current with this date."
   },
   "date_end": {
    "title": "End Date",
    "type": "string",
+   "format": "mydate",
    "description": "Date to which we will carry the projection."
   },
   "default_checking": {

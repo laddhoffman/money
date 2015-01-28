@@ -100,6 +100,54 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                 required_by_default: true
             });
 
+            
+            // ====================== validators ========================
+
+                // Custom validators must return an array of errors or an empty array if valid
+                JSONEditor.defaults.custom_validators.push(function(schema, value, path) {
+                  var errors = [];
+                  if(schema.format==="mydate") {
+                    if(!/(^$|^[0-9]{4}-[0-9]+-[0-9]+)$/.test(value)) {
+                      // Errors must be an object with `path`, `property`, and `message`
+                      errors.push({
+                        path: path,
+                        property: 'format',
+                        message: 'Dates must be in the format "Y-m-d". (path: '+path+')'
+                      });
+                    }
+                  }
+                  return errors;
+                });
+
+
+
+                // Custom validators must return an array of errors or an empty array if valid
+                JSONEditor.defaults.custom_validators.push(function(schema, value, path) {
+                  var errors = [];
+                  if(path==="root.0.name") {
+                    // Remove anything which isn't a word, whitespace, number
+                    // or any of the following caracters -_~,;:[]().
+                    if (/([^\w\s\d\-_~,;:\[\]\(\).])/.test(value)) {
+                      errors.push({
+                        path: path,
+                        property: 'format',
+                        message: 'Name must not contain weird characters'
+                      });
+                    }
+                    // Remove any runs of periods (thanks falstro!)
+                    if (/([\.]{2,})/.test(value)) {
+                      errors.push({
+                        path: path,
+                        property: 'format',
+                        message: 'Name must not contain multiple consecutive periods'
+                      });
+                    }
+                  }
+                  return errors;
+                });
+
+
+
             // ====================== functions ========================
 
             function save_to_file(setup) {
