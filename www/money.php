@@ -39,8 +39,8 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 <!-- JSON Editor -->
 <script src='jsoneditor.js'></script>
 
-<!-- Chart.js charting library -->
-<script src='Chart.js'></script>
+<!-- CanvasJS charting library -->
+<script src='canvasjs.min.js'></script>
 
 <style>
 ul.line-legend {
@@ -194,8 +194,13 @@ ul.line-legend {
                 return legend_html;
         }
 
+        function draw_chart_canvasjs(chart_name, data) {
+            var chart = new CanvasJS.Chart(chart_name, data);
+            chart.render();
+        }
+
             function compute(name) {
-                    document.getElementById('status').innerHTML += "compute("+name+")<br>";
+                    // document.getElementById('status').innerHTML += "compute("+name+")<br>";
 
                     // now call the script to perform the calculations
                     var xmlhttp;
@@ -220,7 +225,8 @@ ul.line-legend {
                     var result = JSON.parse(xmlhttp.responseText);
                     // console.log('response: ' + xmlhttp.responseText);
 
-                    result_append('<canvas id="chart" width="1000" height="400"></canvas>');
+                    result_append('<div id="chart_canvasjs" style="height: 400px; width: 100%;">');
+                    // result_append('<canvas id="chart" width="1000" height="400"></canvas>');
 
                     document.getElementById('result_clear').style.visibility = 'visible';
 
@@ -275,10 +281,69 @@ ul.line-legend {
                         data.datasets[3].data.push(row.totals.net_worth.toFixed(2));
                     });
 
+                    /*
                     var legend = draw_chart('chart', data);
                     
                     // result_append(legend);
                     document.getElementById('status').innerHTML = legend;
+                    */
+
+                    // try the CanvasJS chart
+
+                    data_canvasjs = {
+                        axisY:{
+                            gridThickness: 1,
+                        },
+                        toolTip:{
+                            shared: true,
+                        },
+                        legend:{
+                            fontSize: 20,
+                            fontFamily: "tamoha",
+                            // fontColor: "Sienna"      
+                        },
+                        data: [
+                            {        
+                                type: "line",
+                                name: "Checking",
+                                color: "green",
+                                showInLegend: true,
+                                dataPoints: []
+                            },
+                            {        
+                                type: "line",
+                                name: "Loans",
+                                color: "yellow",
+                                showInLegend: true,
+                                dataPoints: []
+                            },
+                            {        
+                                type: "line",
+                                name: "Portfolio",
+                                color: "blue",
+                                showInLegend: true,
+                                dataPoints: []
+                            },
+                            {        
+                                type: "line",
+                                name: "Net",
+                                color: "red",
+                                showInLegend: true,
+                                dataPoints: []
+                            }
+                        ]
+                    };
+                    var n = 0;
+                    result.data.forEach(function (row) {
+                        // Add Totals to a dataset for graphing
+                        today = row.date.split('-');
+                        data_canvasjs.data[0].dataPoints.push({x: new Date(today[0], today[1], today[2]), y: Number(row.totals.checking.toFixed(2))});
+                        data_canvasjs.data[1].dataPoints.push({x: new Date(today[0], today[1], today[2]), y: Number(row.totals.loans.toFixed(2))});
+                        data_canvasjs.data[2].dataPoints.push({x: new Date(today[0], today[1], today[2]), y: Number(row.totals.portfolio.toFixed(2))});
+                        data_canvasjs.data[3].dataPoints.push({x: new Date(today[0], today[1], today[2]), y: Number(row.totals.net_worth.toFixed(2))});
+                    });
+                    console.log(data_canvasjs);
+                    draw_chart_canvasjs('chart_canvasjs', data_canvasjs);
             }
 
             function result_clear() {
@@ -306,13 +371,13 @@ ul.line-legend {
 
             // Hook up the Compute button
             document.getElementById('compute').addEventListener('click',function() {
-                result_clear();
-
                 // save first
                 if (!save_all()) {
                     // Error saving
                     return false;
                 }
+
+                result_clear();
 
                 // get actively selected setup
                 var name = editor.editors.root.active_tab.innerText;
