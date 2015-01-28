@@ -189,7 +189,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     var result = JSON.parse(xmlhttp.responseText);
                     // console.log('response: ' + xmlhttp.responseText);
 
-                    result_append('<div id="chart_canvasjs" style="height: 400px; width: 90%;">');
+                    result_append('<div id="chart_canvasjs" style="height: 400px; width: 98%;">');
 
                     document.getElementById('result_clear').style.visibility = 'visible';
 
@@ -204,6 +204,8 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                             text: "Financial Projections",
                             fontSize: 20
                         },
+			exportFileName: "financial_projections_" + name,
+			exportEnabled: true,
                         axisY:{
                             gridThickness: 1,
                         },
