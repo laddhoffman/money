@@ -165,39 +165,10 @@ ul.line-legend {
                 }
             }
 
-        function draw_chart(chart_name, data) {
-                // Get the context of the canvas element we want to select
-                var ctx = document.getElementById(chart_name).getContext("2d");
-
-                options = {
-                        scaleShowGridLines : true,
-                         scaleGridLineColor : "rgba(0,0,0,.05)",
-                         scaleGridLineWidth : 1,
-                        scaleShowHorizontalLines: true,
-                        scaleShowVerticalLines: false,
-                        bezierCurve : false,
-                         bezierCurveTension : 0.2,
-                        pointDot : false,
-                         pointDotRadius : 4,
-                         pointDotStrokeWidth : 1,
-                         pointHitDetectionRadius : 20,
-                        datasetStroke : true,
-                         datasetStrokeWidth : 2,
-                        datasetFill : false,
-                        // legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\">%nbsp;</span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
-                        legendTemplate : "<div><ul class=\"line-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"color:<%=datasets[i].strokeColor%>\"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></span></li><%}%></ul></div>"
-                };
-
-                // Line Chart
-                var myLineChart = new Chart(ctx).Line(data, options);
-                var legend_html = myLineChart.generateLegend();
-                return legend_html;
-        }
-
-        function draw_chart_canvasjs(chart_name, data) {
-            var chart = new CanvasJS.Chart(chart_name, data);
-            chart.render();
-        }
+            function draw_chart_canvasjs(chart_name, data) {
+                var chart = new CanvasJS.Chart(chart_name, data);
+                chart.render();
+            }
 
             function compute(name) {
                     // document.getElementById('status').innerHTML += "compute("+name+")<br>";
@@ -225,70 +196,15 @@ ul.line-legend {
                     var result = JSON.parse(xmlhttp.responseText);
                     // console.log('response: ' + xmlhttp.responseText);
 
-                    result_append('<div id="chart_canvasjs" style="height: 400px; width: 100%;">');
-                    // result_append('<canvas id="chart" width="1000" height="400"></canvas>');
+                    result_append('<div id="chart_canvasjs" style="height: 400px; width: 90%;">');
 
                     document.getElementById('result_clear').style.visibility = 'visible';
 
                     // Process the returned data
                     // Data is returned as an array of rows; each row is an object representing a day.
                     // console.log(result.data[0]);
-                    var data = {
-                        labels:[],
-                        datasets:[
-                            { 
-                                label: "Checking", 
-                                fillColor: "rgba(0, 255, 0, 0.2)",
-                                strokeColor: "rgba(0, 255, 0, 1)",
-                                pointColor: "rgba(0, 255, 0, 1)",
-                                data: [] 
-                            },
-                            { 
-                                label: "Loans", 
-                                fillColor: "rgba(0, 128, 255, 0.2)",
-                                strokeColor: "rgba(0, 128, 255, 1)",
-                                pointColor: "rgba(0, 128, 255, 1)",
-                                data: [] 
-                            },
-                            { 
-                                label: "Portfolio", 
-                                fillColor: "rgba(128, 128, 0, 0.2)",
-                                strokeColor: "rgba(128, 128, 0, 1)",
-                                pointColor: "rgba(128, 128, 0, 1)",
-                                data: [] 
-                            },
-                            { 
-                                label: "Net", 
-                                fillColor: "rgba(128, 128, 128, 0.2)",
-                                strokeColor: "rgba(128, 128, 128, 1)",
-                                pointColor: "rgba(128, 128, 128, 1)",
-                                data: [] 
-                            }
-                        ]
-                    };
-                    var n = 0;
-                    result.data.forEach(function (row) {
-                        // Add Totals to a dataset for graphing
-                        if (row.date.split('-')[2] == 1) {
-                                var year_month = row.date.split('-')[0] + '-' + row.date.split('-')[1];
-                                data.labels[n++] = year_month;
-                        } else {
-                                data.labels[n++] = '';
-                        }
-                        data.datasets[0].data.push(row.totals.checking.toFixed(2));
-                        data.datasets[1].data.push(row.totals.loans.toFixed(2));
-                        data.datasets[2].data.push(row.totals.portfolio.toFixed(2));
-                        data.datasets[3].data.push(row.totals.net_worth.toFixed(2));
-                    });
 
-                    /*
-                    var legend = draw_chart('chart', data);
-                    
-                    // result_append(legend);
-                    document.getElementById('status').innerHTML = legend;
-                    */
-
-                    // try the CanvasJS chart
+                    // Produce a CanvasJS chart
 
                     data_canvasjs = {
                         axisY:{
@@ -342,7 +258,9 @@ ul.line-legend {
                         data_canvasjs.data[2].dataPoints.push({x: new Date(today[0], today[1], today[2]), y: Number(row.totals.portfolio.toFixed(2))});
                         data_canvasjs.data[3].dataPoints.push({x: new Date(today[0], today[1], today[2]), y: Number(row.totals.net_worth.toFixed(2))});
                     });
-                    console.log(data_canvasjs);
+
+                    // console.log(data_canvasjs);
+
                     draw_chart_canvasjs('chart_canvasjs', data_canvasjs);
             }
 
