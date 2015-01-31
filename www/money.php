@@ -54,6 +54,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
         <button id='result_clear' style='visibility:hidden'>Clear Result</button><br>
         <button id='save_all'>Save All</button>
         <button id='compute'>Compute</button>
+        <button id='copy'>Copy</button>
         <button id='restore'>Revert to Saved</button>
         <!-- <button id='enable_disable'>Disable/Enable Form</button> -->
         <span id='valid_indicator'></span>
@@ -126,7 +127,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                 });
 */
 
-
+		// TODO: validate that interest are calculated monthly
 
                 // Custom validators must return an array of errors or an empty array if valid
                 JSONEditor.defaults.custom_validators.push(function(schema, value, path) {
@@ -167,7 +168,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     )
         */
                     content_string = JSON.stringify(setup, null, 1);
-                    console.dir(JSON.parse(content_string));
+                    // console.dir(JSON.parse(content_string));
                     // POST the data to be saved to a file
                     var xmlhttp;
                     if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -218,6 +219,11 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                 chart.render();
             }
 
+			function copy(name) {
+				// TODO: write a php file we can call here to save a copy of the active setup
+				return true;
+			}
+
             function compute(name) {
                     // document.getElementById('status').innerHTML += "compute("+name+")<br>";
 
@@ -244,7 +250,11 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     var result = JSON.parse(xmlhttp.responseText);
                     // console.log('response: ' + xmlhttp.responseText);
 
-                    result_append('<div id="chart_canvasjs" style="height: 400px; width: 98%;">');
+                    result_append('<div id="chart_totals" style="height: 400px; width: 98%;">');
+                    result_append('<br>');
+                    result_append('<div id="chart_loans" style="height: 400px; width: 98%;">');
+                    result_append('<br>');
+                    result_append('<div id="chart_portfolio" style="height: 400px; width: 98%;">');
 
                     document.getElementById('result_clear').style.visibility = 'visible';
 
@@ -254,12 +264,12 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 
                     // Produce a CanvasJS chart
 
-                    data_canvasjs = {
+                    data_totals = {
                         title:{
-                            text: "Financial Projections",
+                            text: "Financial Projections - Totals",
                             fontSize: 20
                         },
-			            exportFileName: "financial_projections_" + name,
+			            exportFileName: "financial_projections_" + name + "_totals",
 			            exportEnabled: true,
                         axisY:{
                             gridThickness: 1,
@@ -272,49 +282,120 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                             fontFamily: "tamoha",
                         },
                         data: [
-                            {        
-                                type: "line",
-                                name: "Checking",
-                                color: "green",
-                                showInLegend: true,
-                                dataPoints: []
-                            },
-                            {        
-                                type: "line",
-                                name: "Loans",
-                                color: "yellow",
-                                showInLegend: true,
-                                dataPoints: []
-                            },
-                            {        
-                                type: "line",
-                                name: "Portfolio",
-                                color: "blue",
-                                showInLegend: true,
-                                dataPoints: []
-                            },
-                            {        
-                                type: "line",
-                                name: "Net",
-                                color: "red",
-                                showInLegend: true,
-                                dataPoints: []
-                            }
+                            { type: "line", name: "Checking", color: "green", showInLegend: true, dataPoints: [] },
+                            { type: "line", name: "Loans", color: "yellow", showInLegend: true, dataPoints: [] },
+                            { type: "line", name: "Portfolio", color: "blue", showInLegend: true, dataPoints: [] },
+                            { type: "line", name: "Net", color: "red", showInLegend: true, dataPoints: [] }
                         ]
                     };
                     var n = 0;
                     result.data.forEach(function (row) {
                         // Add Totals to a dataset for graphing
                         today = row.date.split('-');
-                        data_canvasjs.data[0].dataPoints.push({x: new Date(today[0], today[1], today[2]), y: Number(row.totals.checking.toFixed(2))});
-                        data_canvasjs.data[1].dataPoints.push({x: new Date(today[0], today[1], today[2]), y: Number(row.totals.loans.toFixed(2))});
-                        data_canvasjs.data[2].dataPoints.push({x: new Date(today[0], today[1], today[2]), y: Number(row.totals.portfolio.toFixed(2))});
-                        data_canvasjs.data[3].dataPoints.push({x: new Date(today[0], today[1], today[2]), y: Number(row.totals.net_worth.toFixed(2))});
+			this_date = new Date(today[0], today[1] - 1, today[2]);
+                        data_totals.data[0].dataPoints.push({x: this_date, y: Number(row.totals.checking.toFixed(2))});
+                        data_totals.data[1].dataPoints.push({x: this_date, y: Number(row.totals.loans.toFixed(2))});
+                        data_totals.data[2].dataPoints.push({x: this_date, y: Number(row.totals.portfolio.toFixed(2))});
+                        data_totals.data[3].dataPoints.push({x: this_date, y: Number(row.totals.net_worth.toFixed(2))});
                     });
 
                     // console.log(data_canvasjs);
 
-                    draw_chart_canvasjs('chart_canvasjs', data_canvasjs);
+                    draw_chart_canvasjs('chart_totals', data_totals);
+
+                    data_loans = {
+                        title:{
+                            text: "Financial Projections - Loans",
+                            fontSize: 20
+                        },
+			            exportFileName: "financial_projections_" + name + "_loans",
+			            exportEnabled: true,
+                        axisY:{
+                            gridThickness: 1,
+                        },
+                        toolTip:{
+                            shared: true,
+                        },
+                        legend:{
+                            fontSize: 20,
+                            fontFamily: "tamoha",
+                        },
+                        data: [
+                           /* { type: "line", name: "%s", color: "%s", showInLegend: true, dataPoints: [] } */
+                        ]
+                    };
+
+					var colors = ['blue', 'green', 'red', 'yellow', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
+                    var loans = result.data[0].each_loan;
+                    n = 0;
+                    Object.keys(loans).forEach(function (loan) {
+                        var line = { type: "line", name: loan, color: colors[n], showInLegend: true, dataPoints: [] };
+						data_loans.data.push(line);
+						n++;
+					});
+
+                    n = 0;
+                    result.data.forEach(function (row) {
+                        // Add Totals to a dataset for graphing
+
+                        today = row.date.split('-');
+						this_date = new Date(today[0], today[1] - 1, today[2]);
+						var col_n = 0;
+                    	Object.keys(loans).forEach(function (loan) {
+							this_amount = Number(row.each_loan[loan].toFixed(2));
+                        	data_loans.data[col_n].dataPoints.push({x: this_date, y: this_amount});
+							col_n++;
+						});
+                    });
+
+                    draw_chart_canvasjs('chart_loans', data_loans);
+
+                    data_portfolio = {
+                        title:{
+                            text: "Financial Projections - Portfolio",
+                            fontSize: 20
+                        },
+			            exportFileName: "financial_projections_" + name + "_portfolio",
+			            exportEnabled: true,
+                        axisY:{
+                            gridThickness: 1,
+                        },
+                        toolTip:{
+                            shared: true,
+                        },
+                        legend:{
+                            fontSize: 20,
+                            fontFamily: "tamoha",
+                        },
+                        data: [
+                           /* { type: "line", name: "%s", color: "%s", showInLegend: true, dataPoints: [] } */
+                        ]
+                    };
+
+					var colors = ['blue', 'green', 'red', 'yellow', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
+                    var portfolio = result.data[0].each_holding;
+                    n = 0;
+                    Object.keys(portfolio).forEach(function (holding) {
+                        var line = { type: "line", name: holding, color: colors[n], showInLegend: true, dataPoints: [] };
+						data_portfolio.data.push(line);
+						n++;
+					});
+
+                    n = 0;
+                    result.data.forEach(function (row) {
+                        // Add Totals to a dataset for graphing
+
+                        today = row.date.split('-');
+						this_date = new Date(today[0], today[1] - 1, today[2]);
+						var col_n = 0;
+                    	Object.keys(portfolio).forEach(function (holding) {
+							this_amount = Number(row.each_holding[holding].toFixed(2));
+                        	data_portfolio.data[col_n].dataPoints.push({x: this_date, y: this_amount});
+							col_n++;
+						});
+                    });
+
+                    draw_chart_canvasjs('chart_portfolio', data_portfolio);
             }
 
             function result_clear() {
@@ -355,6 +436,21 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 
                 // compute
                 compute(name);
+           });
+
+            // Hook up the Copy button
+            document.getElementById('copy').addEventListener('click',function() {
+                // save first
+                if (!save_all()) {
+                    // Error saving
+                    return false;
+                }
+
+                // get actively selected setup
+                var name = editor.editors.root.active_tab.innerText;
+
+                // copy
+                copy(name);
            });
 
             

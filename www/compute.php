@@ -3,20 +3,29 @@
 include("functions.php");
 include("classes.php");
 
+$options = getopt('', array(
+	'input:',
+	'user:',
+));
+
 if (isset($_REQUEST['input_file'])) {
     $json_input_file = $_REQUEST['input_file'];
 } elseif (isset($_POST['input_file'])) {
     $json_input_file = $_POST['input_file'];
 } else {
-    $options = getopt('', array(
-        'input:',
-    ));
     $json_input_file = $options['input'];
+}
+
+if (isset($_SERVER['REMOTE_USER'])) {
+	$user = $_SERVER['REMOTE_USER'];
+} else {
+    $user = $options['user'];
 }
 
 //echo "filename = $json_input_file";
 
 $debug = false;
+$debug_intervals = false;
 $print_each_loan = true;
 $print_each_expense = true;
 $print_each_holding = true;
@@ -38,13 +47,15 @@ if (!$json_input_file) {
     exit(1);
 }
 
+if (!$user) {
+    $result->status = -1;
+    $result->message = "no user specified";
+    echo json_encode($results);
+    exit(1);
+}
+
 ############### read from json #################
 
-if (isset($_SERVER['REMOTE_USER'])) {
-	$user = $_SERVER['REMOTE_USER'];
-} else {
-	$user = 'guest';
-}
 $json_input_path = "setups/$user/$json_input_file";
 
 $input = json_decode(file_get_contents($json_input_path)); // make an object
@@ -61,18 +72,21 @@ foreach ($input->accounts as $a) {
     $account->set_balance($a->balance);
 }
 
-$finances->set_default_checking_name($input->default_checking);
+$default_checking_name = $input->default_checking;
+$finances->set_default_checking_name($default_checking_name);
 
 # read portfolio
 $portfolio = $finances->portfolio;
 foreach ($input->portfolio as $a) {
-    $holding = $portfolio->add_account($a->name);
+    $holding = $portfolio->add_holding($a->name);
     $holding->set_balance($a->balance);
     if ($a->checking_name) {
         $holding->set_checking_name($finances, $a->checking_name);
-    }
-    if (isset($a->transfer_schedule)) {
-        foreach ($a->transfer_schedule as $t) {
+    } else {
+        $holding->set_checking_name($finances, $default_checking_name);
+	}
+    if (isset($a->payment_schedule)) {
+        foreach ($a->payment_schedule as $t) {
             $holding->add_transfer($t->amount, $t->date_start, $t->date_end, $t->period, $t->extra);
         }
     }

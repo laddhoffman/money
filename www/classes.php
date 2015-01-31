@@ -147,7 +147,7 @@ class Finances implements JsonSerializable {
 		}
 		if ($print_each_holding) {
 			foreach ($this->portfolio->list as $name => $holding) {
-                $amount = $holding->earning->get_amount($date);
+                $amount = $holding->get_balance($date);
 				if ($print_tsv) printf("\t%.2f", $amount);
                 $results['each_holding'][$name] = $amount;
 			}
@@ -200,14 +200,15 @@ class ValueInterval implements JsonSerializable {
 	}
 	function includes($date) {
 		global $debug;
-		//if ($debug) { printf("? '%s' < '%s' < '%s' ? ", $this->date_start, $date, $this->date_end); }
+		global $debug_intervals;
+		if ($debug_intervals) { printf("? '%s' < '%s' < '%s' ? ", $this->date_start, $date, $this->date_end); }
 		if (($this->date_start == 0 or $date >= $this->date_start)
 		  and ($this->date_end == 0 or $date <= $this->date_end)) {
 			$res = true;
 		} else {
 			$res = false;
 		}
-		//if ($debug) { echo $res ? "yes" : "no"; echo "\n"; }
+		if ($debug_intervals) { echo $res ? "yes" : "no"; echo "\n"; }
 		return $res;
 	}
 	function jsonSerialize() {
@@ -333,6 +334,9 @@ class MoneyItem implements JsonSerializable {
 			break;
 		default:
 			throw new Exception("unkown period '$period'");
+		}
+		if ($debug) {
+			printf("get_amount($date) $val->period, $val->amount, $val->extra -> $money\n");
 		}
 		return $money;
 	}
@@ -525,36 +529,36 @@ class Account implements JsonSerializable {
 class Portfolio implements JsonSerializable {
 	// a collection of Holdings, accounts which can have earnings
 	var $list = array(); // array of Holding objects
-	function add_account($name) {
-		$this_account = new Holding();
-		$this->list[$name] = $this_account;
-		return $this_account;
+	function add_holding($name) {
+		$this_holding = new Holding();
+		$this->list[$name] = $this_holding;
+		return $this_holding;
 	}
 	function get_all_balances() {
 		// return all balances
 		$money = 0;
-		foreach ($this->list as $this_account) {
-			$money += $this_account->get_balance();
+		foreach ($this->list as $this_holding) {
+			$money += $this_holding->get_balance();
 		}
 		return $money;
 	}
 	function compute_all_interest($date) {
-		// compute interest on each account, adding it to the balance
+		// compute interest on each holding, adding it to the balance
 		global $debug;
 		if ($debug) { echo "compute_all_interest('$date');\n";}
 		$money = 0;
-		foreach ($this->list as $this_account) {
-			$money += $this_account->compute_interest($date);
+		foreach ($this->list as $this_holding) {
+			$money += $this_holding->compute_interest($date);
 		}
 		return $money;
 	}
 	function compute_all_transfers($date, $default_checking) {
-		// compute transfers to each account, adding it to the balance
+		// compute transfers to each holding, adding it to the balance
 		global $debug;
 		if ($debug) { echo "compute_all_transfers('$date');\n";}
 		$money = 0;
-		foreach ($this->list as $this_account) {
-			$money += $this_account->compute_transfers($date, $default_checking);
+		foreach ($this->list as $this_holding) {
+			$money += $this_holding->compute_transfers($date);
 		}
 		return $money;
 	}
@@ -585,10 +589,11 @@ class Holding extends Account implements JsonSerializable {
 		foreach ($finances->accounts->list as $name => $checking) {
 			if ($name == $checking_name) {
 				$this->checking = $checking;
-                $this->checking_name = $checking_name;
-				break;
+                		$this->checking_name = $checking_name;
+				return;
 			}
 		}
+		throw new Exception("checking acnt '$checking_name' not found");
 	}
 	function get_checking() {
 		return $this->checking;
@@ -597,14 +602,18 @@ class Holding extends Account implements JsonSerializable {
 		$this->transfer_schedule->add_amount($amount, $date_start, $date_end, $period, $extra);
 	}
 
-	function compute_transfers($date, $default_checking) {
+	function compute_transfers($date) {
+		global $debug;
+		global $debug_intervals;
 		// take money from checking and put into savings
 		if (isset($this->checking)) {
 			$checking = $this->checking;
 		} else {
-			$checking = $default_checking;
+			throw new Exception("no checking acnt set");
 		}
+		if ($debug_intervals) { printf("checking transfer:"); }
 		$amount = $this->transfer_schedule->get_amount($date);
+		if ($debug) { echo "compute_transfers -> $amount\n";}
 		$checking->withdraw($amount);
 		$this->deposit($amount);
 		return $amount;
