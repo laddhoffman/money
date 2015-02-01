@@ -167,13 +167,6 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 
             function save_to_file(setup) {
                     filename = setup.name;
-        /*
-                    if (!filename) {
-                        message = "need a name for setup '" + setup.title + "'!";
-                        document.getElementById('status').innerHTML += message + '<br>';
-                        continue;
-                    )
-        */
                     content_string = JSON.stringify(setup, null, 1);
                     // console.dir(JSON.parse(content_string));
                     // POST the data to be saved to a file
@@ -218,7 +211,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 						// document.getElementById('status').innerHTML += result.message + '<br>';
 						return true;
 					} else {
-						document.getElementById('status').innerHTML += result.message + '<br>';
+						document.getElementById('status').innerHTML += "Error cleaning up files: " + result.message + '<br>';
 						return false;
                     }
                     return true;

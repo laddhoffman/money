@@ -18,13 +18,15 @@
    "title": "Period",
    "type": "string",
    "enum": [
+	"constant",
+	"once",
     "weekly",
     "biweekly",
     "monthly",
     "semiannual",
     "annual"
    ],
-   "default": "biweekly"
+   "default": "monthly"
   },
   "extra": {
    "title": "Key Date",
