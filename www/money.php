@@ -14,6 +14,9 @@ foreach ($files as $file) {
         if (preg_match('/^\.+$/', $file)) {
                 continue;
         }
+		if (is_dir($save_dir . '/' . $file)) {
+			continue;
+		}
         // echo "$file\n";
         $setups[] = json_decode(file_get_contents("$save_dir/$file"));
 }
@@ -87,7 +90,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     title: "Financial Setups",
                     format: "tabs",
                     options: {
-                        disable_array_delete: true
+                        disable_array_delete: false
                     },
                     items: {
                         // title: "Financial Setup",
@@ -103,7 +106,10 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                 no_additional_properties: true,
                 
                 // Require all properties by default
-                required_by_default: true
+                required_by_default: true,
+
+				disable_edit_json: true,
+				disable_properties: true
             });
 
             
@@ -194,16 +200,45 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     return true;
             }
 
+			function request_cleanup(files_to_keep) {
+                    files_to_keep_str = JSON.stringify(files_to_keep, null, 1);
+                    // console.dir(JSON.parse(content_string));
+                    // POST the data to be saved to a file
+                    var xmlhttp;
+					xmlhttp = new XMLHttpRequest();
+                    xmlhttp.open("POST", "cleanup_files.php", false);
+                    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    string_to_send = '';
+                    string_to_send += 'filenames='+encodeURIComponent(files_to_keep_str);
+                    // console.log(string_to_send);
+                    xmlhttp.send(string_to_send);
+                    var result = JSON.parse(xmlhttp.responseText);
+                    // console.log(result);
+                    if (result.status == 0) {
+						// document.getElementById('status').innerHTML += result.message + '<br>';
+						return true;
+					} else {
+						document.getElementById('status').innerHTML += result.message + '<br>';
+						return false;
+                    }
+                    return true;
+			}
+
             function save_all() {
                 // Get the value from the editor
                 // console.log(editor.getValue());
                 setups = editor.getValue()
                 success = true;
+				var files_to_keep = [];
                 setups.forEach(function(setup) {
+					files_to_keep.push(setup.name);
                     if (!save_to_file(setup)) {
                         success = false;
                     }
                 });
+
+				request_cleanup(files_to_keep);
+				
                 if (success) {
                     message = "Saved all input";
                     document.getElementById('status').innerHTML += message + '<br>';
