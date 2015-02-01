@@ -91,7 +91,7 @@ class Finances implements JsonSerializable {
 		$today = $this->today;
 		$date = $this->date;
 	    $columns_totals = array('checking', 'loans', 'portfolio', 'net_worth');
-	    $columns_transactions = array('income', 'expenses', 'payments', 'invest');
+	    $columns_transactions = array('income', 'expenses', 'payments', 'invest', 'earn', 'interest');
 
         $results = array();
         if ($print_tsv) {
@@ -375,10 +375,12 @@ class Loans implements JsonSerializable {
 	function compute_all_interest($date) {
 		// compute interest on each loan, adding it to the balance
 		global $debug;
+		global $debug_interest;
 		if ($debug) { echo "compute_all_interest('$date');\n";}
 		$money = 0;
-		foreach ($this->list as $this_loan) {
-			$money += $this_loan->compute_interest($date);
+		foreach ($this->list as $name => $loan) {
+            if ($debug_interest) { echo "Loans compute_all_interest, $date, $name\n"; }
+			$money += $loan->compute_interest($date);
 		}
 		return $money;
 	}
@@ -396,26 +398,34 @@ class Loan extends MoneyItem implements JsonSerializable {
 	// a loan also has a balance
 	var $balance;
 	// a loan also has an interest rate, but that can change over time
-	var $apr_schedule; // this is a MoneyItem object
+	var $interest_schedule; // this is a MoneyItem object
 	// a loan also has an interest computation method
 	var $interest_method;
 	var $interest_extra;
 	// since we can make payments, record date of last payment
 	var $date_last_payment;
+
 	function setup_loan($interest_method, $interest_extra) {
+		$this->interest_schedule = new MoneyItem;
 		$this->interest_method = $interest_method;
 		$this->interest_extra = $interest_extra;
-		$this->apr_schedule = new MoneyItem;
+        if ($this->interest_extra == '') {
+            $this->interest_extra = 'January 1';
+        }
 	}
+
 	function set_balance($value) {
 		$this->balance = $value;
 	}
+
 	function get_balance() {
 		return $this->balance;
 	}
+
 	function add_interest($amount, $date_start, $date_end, $period, $extra) {
-		$this->apr_schedule->add_amount($amount, $date_start, $date_end, $period, $extra);
+		$this->interest_schedule->add_amount($amount, $date_start, $date_end, $period, $extra);
 	}
+
 	function make_payment($date) {
 		$amount = $this->get_amount($date);
 		if ($this->balance < $amount) {
@@ -425,23 +435,26 @@ class Loan extends MoneyItem implements JsonSerializable {
 		$this->date_last_payment = $date;
 		return $amount;
 	}
+
 	function compute_interest($date) {
 		global $debug;
+		global $debug_interest;
 		if ($debug) { echo "compute_interest('$date');\n"; }
 		$interest_method = $this->interest_method;
 		$money = 0;
-		$apr = $this->apr_schedule->get_amount($date);
+		$interest_rate = $this->interest_schedule->get_amount($date);
 		switch ($interest_method) {
 		case 'monthly':
 			// make sure day matches $this->interest_extra
 			$day_this = date('d', strtotime($date));
 			$day_interest = date('d', strtotime($this->interest_extra));
-			if ($debug) { echo "monthly interest, comparing day_this '$day_this' to day_interest '$day_interest'\n";}
+			if ($debug_interest) { echo "compute_interest, comparing day_this '$day_this' to day_interest '$day_interest'\n";}
 			if ($day_this != $day_interest) {
 				break;
 			}
 			// interest formula
-			$money = $this->balance * (0.01 * $apr / 12);
+			$money = $this->balance * (0.01 * $interest_rate / 12);
+			if ($debug_interest) { echo "compute_interest: $this->balance, $interest_rate -> $money\n";}
 			break;
 		// TODO: handle other interest methods, such as daily
 		default:
@@ -451,6 +464,7 @@ class Loan extends MoneyItem implements JsonSerializable {
 		$this->balance += $money;
 		return $money;
 	}
+
 	function jsonSerialize() {
 		global $debug;
 		if ($debug) {print_r($this);}
@@ -458,7 +472,7 @@ class Loan extends MoneyItem implements JsonSerializable {
 		$res['balance'] = $this->get_balance();
 		$res['interest_method'] = $this->interest_method;
 		$res['interest_extra'] = $this->interest_extra;
-		$res['apr_schedule'] = $this->apr_schedule->jsonSerialize();
+		$res['interest_schedule'] = $this->interest_schedule->jsonSerialize();
 		$res['payment_schedule'] = parent::jsonSerialize();
 		return $res;
 	}
@@ -467,11 +481,13 @@ class Loan extends MoneyItem implements JsonSerializable {
 class Accounts implements JsonSerializable {
 	// a collection of "checking" accounts 
 	var $list = array(); // array of Account objects
+
 	function add_account($name) {
 		$this_account = new Account;
 		$this->list[$name] = $this_account;
 		return $this_account;
 	}
+
 	function get_all_balances() {
 		// return all balances
 		$money = 0;
@@ -480,6 +496,7 @@ class Accounts implements JsonSerializable {
 		}
 		return $money;
 	}
+
 	function jsonSerialize() {
 		$res = array();
 		foreach ($this->list as $name => $item) {
@@ -529,11 +546,13 @@ class Account implements JsonSerializable {
 class Portfolio implements JsonSerializable {
 	// a collection of Holdings, accounts which can have earnings
 	var $list = array(); // array of Holding objects
+
 	function add_holding($name) {
 		$this_holding = new Holding();
 		$this->list[$name] = $this_holding;
 		return $this_holding;
 	}
+
 	function get_all_balances() {
 		// return all balances
 		$money = 0;
@@ -542,16 +561,20 @@ class Portfolio implements JsonSerializable {
 		}
 		return $money;
 	}
+
 	function compute_all_interest($date) {
 		// compute interest on each holding, adding it to the balance
 		global $debug;
+		global $debug_interest;
 		if ($debug) { echo "compute_all_interest('$date');\n";}
 		$money = 0;
-		foreach ($this->list as $this_holding) {
-			$money += $this_holding->compute_interest($date);
+		foreach ($this->list as $name => $holding) {
+            if ($debug_interest) { echo "Portfolio compute_all_interest, $date, $name\n"; }
+			$money += $holding->compute_interest($date);
 		}
 		return $money;
 	}
+
 	function compute_all_transfers($date, $default_checking) {
 		// compute transfers to each holding, adding it to the balance
 		global $debug;
@@ -562,6 +585,7 @@ class Portfolio implements JsonSerializable {
 		}
 		return $money;
 	}
+
 	function jsonSerialize() {
 		$res = array();
 		foreach ($this->list as $name => $item) {
@@ -580,10 +604,12 @@ class Holding extends Account implements JsonSerializable {
 	var $transfer_schedule; // a MoneyItem object referring to the schedule for transfers from checking savings
 	// a savings account can also interest. In effect this is because you are GIVING a loan.
 	var $earning; // a Loan object
+
 	function __construct() {
 		$this->transfer_schedule = new MoneyItem;
 		$this->earning = new Loan;
 	}
+
 	function set_checking_name($finances, $checking_name) {
 		// assign checking account by name.
 		foreach ($finances->accounts->list as $name => $checking) {
@@ -595,9 +621,11 @@ class Holding extends Account implements JsonSerializable {
 		}
 		throw new Exception("checking acnt '$checking_name' not found");
 	}
+
 	function get_checking() {
 		return $this->checking;
 	}
+
 	function add_transfer($amount, $date_start, $date_end, $period, $extra) {
 		$this->transfer_schedule->add_amount($amount, $date_start, $date_end, $period, $extra);
 	}
@@ -624,13 +652,15 @@ class Holding extends Account implements JsonSerializable {
 	}
 
 	function add_interest($amount, $date_start, $date_end, $period, $extra) {
+        // override $extra to make sure it matches the key date for interest for this holding
+        $extra = $this->earning->interest_extra;
 		$this->earning->add_interest($amount, $date_start, $date_end, $period, $extra);
 	}
 
 	function compute_interest($date) {
 		// make sure we sync our balance to and from the earnings account
 		$money = 0;
-		if ($this->earning->apr_schedule) {
+		if ($this->earning->interest_schedule) {
 			$this->earning->set_balance($this->get_balance());
 			$money = $this->earning->compute_interest($date);
 			$this->set_balance($this->earning->get_balance());
@@ -642,7 +672,7 @@ class Holding extends Account implements JsonSerializable {
 		$res['balance'] = $this->get_balance();
 		$res['checking_name'] = $this->checking->name;
 		$res['transfer_schedule'] = $this->transfer_schedule->jsonSerialize();
-		if (isset($this->earning->apr_schedule)) {
+		if (isset($this->earning->interest_schedule)) {
 			$res['earning'] = $this->earning->jsonSerialize();
 		}
 		return $res;

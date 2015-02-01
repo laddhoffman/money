@@ -6,10 +6,12 @@
   "headerTemplate": "{{ self.name }}",
   "properties": {
    "name": {
+    "title": "Name",
     "type": "string"
    },
    "schedule": {
-     "$ref": "schema/MoneyItem.json?ver=5"
+     "title": "Schedule",
+     "$ref": "schema/MoneyItem.json?ver=6"
    }
   }
  }

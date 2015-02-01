@@ -92,7 +92,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     items: {
                         // title: "Financial Setup",
                         headerTemplate: "{{self.name}}",
-                        $ref: "schema/Setup.json?ver=5"
+                        $ref: "schema/Setup.json?ver=6"
                     }
                 },
                 
@@ -128,6 +128,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 */
 
 		// TODO: validate that interest are calculated monthly
+		// TODO: validate that interest extra matches each interest schedule key date
 
                 // Custom validators must return an array of errors or an empty array if valid
                 JSONEditor.defaults.custom_validators.push(function(schema, value, path) {

@@ -1,5 +1,5 @@
 {
- "$ref": "schema/Account.json?ver=5",
+ "$ref": "schema/Account.json?ver=6",
  "properties": {
   "interest_method": {
    "propertyOrder": 2000,
@@ -21,15 +21,15 @@
    "title": "Associated Checking Account",
    "type": "string"
   },
-  "apr_schedule": {
+  "interest_schedule": {
    "propertyOrder": 2000,
-   "title": "APR Schedule",
-   "$ref": "schema/MoneyItem.json?ver=5"
+   "title": "Interest Schedule",
+   "$ref": "schema/MoneyItem.json?ver=6"
   },
   "payment_schedule": {
    "propertyOrder": 2000,
    "title": "Payment Schedule",
-   "$ref": "schema/MoneyItem.json?ver=5"
+   "$ref": "schema/MoneyItem.json?ver=6"
   }
  }
 }

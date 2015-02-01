@@ -26,6 +26,8 @@ if (isset($_SERVER['REMOTE_USER'])) {
 
 $debug = false;
 $debug_intervals = false;
+$debug_interest = false;
+
 $print_each_loan = true;
 $print_each_expense = true;
 $print_each_holding = true;
@@ -91,10 +93,9 @@ foreach ($input->portfolio as $a) {
         }
     }
     // some holdings earn interest
-    if (isset($a->earning)) {
-        $earning = $a->earning;
-        $holding->setup_earning($earning->interest_method, $earning->interest_extra);
-        foreach ($earning->apr_schedule as $t) {
+    if (isset($a->interest_schedule)) {
+        $holding->setup_earning($a->interest_method, $a->interest_extra);
+        foreach ($a->interest_schedule as $t) {
             $holding->add_interest($t->amount, $t->date_start, $t->date_end, $t->period, $t->extra);
         }
     }
@@ -106,7 +107,7 @@ foreach ($input->loans as $a) {
     $loan = $loans->add_loan($a->name);
     $loan->setup_loan($a->interest_method, $a->interest_extra);
     $loan->set_balance($a->balance);
-    foreach ($a->apr_schedule as $t) {
+    foreach ($a->interest_schedule as $t) {
         $loan->add_interest($t->amount, $t->date_start, $t->date_end, $t->period, $t->extra);
     }
     foreach ($a->payment_schedule as $t) {
