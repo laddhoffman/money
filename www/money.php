@@ -205,15 +205,37 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     }
                 });
                 if (success) {
-                        message = "Saved all input";
-                        document.getElementById('status').innerHTML += message + '<br>';
-                        return true;
+                    message = "Saved all input";
+                    document.getElementById('status').innerHTML += message + '<br>';
+                    return true;
                 } else {
-                        message = "Error while saving input";
-                        document.getElementById('status').innerHTML += message + '<br>';
-                        return false;
+                    message = "Error while saving input";
+                    document.getElementById('status').innerHTML += message + '<br>';
+                    return false;
                 }
             }
+
+			function add_setup(content) {
+      			// e.preventDefault();
+      			// e.stopPropagation();
+				var root = editor.editors.root;
+      			var i = root.rows.length;
+      			if(root.row_cache[i]) {
+        			root.rows[i] = root.row_cache[i];
+        			root.rows[i].container.style.display = '';
+        			if(root.rows[i].tab) root.rows[i].tab.style.display = '';
+        			root.rows[i].register();
+      			}
+      			else {
+        			root.addRow();
+      			}
+				root.rows[i].setValue(content);
+				// root.rows[i].setValue(root.rows[i-1].getValue());
+      			root.active_tab = root.rows[i].tab;
+      			root.refreshTabs();
+      			root.refreshValue();
+      			root.onChange(true);
+			}
 
             function draw_chart_canvasjs(chart_name, data) {
                 var chart = new CanvasJS.Chart(chart_name, data);
@@ -221,32 +243,36 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
             }
 
             function copy(name) {
-					var filename = name;
-                    var xmlhttp;
-                    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-                            xmlhttp=new XMLHttpRequest();
-                    } else {// code for IE6, IE5
-                            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-                    }
-                    // console.log("opening ajax connection");
-                    xmlhttp.open("POST", "copy_file.php", false);
-                    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    string_to_send = '';
-                    string_to_send += 'filename='+encodeURIComponent(filename);
-                    xmlhttp.send(string_to_send);
-                    var result = JSON.parse(xmlhttp.responseText);
-                    // console.log(result);
-                    if (result.status == 0) {
-                        message = "Made a copy of the active setup";
-                        document.getElementById('status').innerHTML += message + '<br>';
-						// TODO: now we need to append it to our array of setups
-						// editor.editors.root.push(result.content);
-                        return true;
-					} else {
-						document.getElementById('status').innerHTML += result.message + '<br>';
-						return false;
-                    }
+				var filename = name;
+
+                var xmlhttp;
+                if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                    xmlhttp=new XMLHttpRequest();
+                } else {// code for IE6, IE5
+                    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                // console.log("opening ajax connection");
+                xmlhttp.open("POST", "copy_file.php", false);
+                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                string_to_send = '';
+                string_to_send += 'filename='+encodeURIComponent(filename);
+                xmlhttp.send(string_to_send);
+                var result = JSON.parse(xmlhttp.responseText);
+
+                // console.log(result);
+                if (result.status == 0) {
+                    message = "Made a copy of the active setup";
+                    document.getElementById('status').innerHTML += message + '<br>';
+					// TODO: now we need to append it to our array of setups
+					// editor.editors.root.push(result.content);
+					var content_obj = JSON.parse(result.content);
+					add_setup(content_obj);
                     return true;
+				} else {
+					document.getElementById('status').innerHTML += result.message + '<br>';
+					return false;
+                }
+                return true;
             }
 
             function compute(name) {
@@ -465,14 +491,14 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
 
             // Hook up the Copy button
             document.getElementById('copy').addEventListener('click',function() {
+                // get actively selected setup
+                var name = editor.editors.root.active_tab.innerText;
+
                 // save first
                 if (!save_all()) {
                     // Error saving
                     return false;
                 }
-
-                // get actively selected setup
-                var name = editor.editors.root.active_tab.innerText;
 
                 // copy
                 copy(name);
