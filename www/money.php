@@ -220,10 +220,34 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                 chart.render();
             }
 
-			function copy(name) {
-				// TODO: write a php file we can call here to save a copy of the active setup
-				return true;
-			}
+            function copy(name) {
+					var filename = name;
+                    var xmlhttp;
+                    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                            xmlhttp=new XMLHttpRequest();
+                    } else {// code for IE6, IE5
+                            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                    }
+                    // console.log("opening ajax connection");
+                    xmlhttp.open("POST", "copy_file.php", false);
+                    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    string_to_send = '';
+                    string_to_send += 'filename='+encodeURIComponent(filename);
+                    xmlhttp.send(string_to_send);
+                    var result = JSON.parse(xmlhttp.responseText);
+                    // console.log(result);
+                    if (result.status == 0) {
+                        message = "Made a copy of the active setup";
+                        document.getElementById('status').innerHTML += message + '<br>';
+						// TODO: now we need to append it to our array of setups
+						// editor.editors.root.push(result.content);
+                        return true;
+					} else {
+						document.getElementById('status').innerHTML += result.message + '<br>';
+						return false;
+                    }
+                    return true;
+            }
 
             function compute(name) {
                     // document.getElementById('status').innerHTML += "compute("+name+")<br>";
@@ -270,8 +294,8 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                             text: "Financial Projections - Totals",
                             fontSize: 20
                         },
-			            exportFileName: "financial_projections_" + name + "_totals",
-			            exportEnabled: true,
+						exportFileName: "financial_projections_" + name + "_totals",
+						exportEnabled: true,
                         axisY:{
                             gridThickness: 1,
                         },
@@ -309,8 +333,8 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                             text: "Financial Projections - Loans",
                             fontSize: 20
                         },
-			            exportFileName: "financial_projections_" + name + "_loans",
-			            exportEnabled: true,
+						exportFileName: "financial_projections_" + name + "_loans",
+						exportEnabled: true,
                         axisY:{
                             gridThickness: 1,
                         },
@@ -342,9 +366,9 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                         today = row.date.split('-');
 						this_date = new Date(today[0], today[1] - 1, today[2]);
 						var col_n = 0;
-                    	Object.keys(loans).forEach(function (loan) {
+						Object.keys(loans).forEach(function (loan) {
 							this_amount = Number(row.each_loan[loan].toFixed(2));
-                        	data_loans.data[col_n].dataPoints.push({x: this_date, y: this_amount});
+							data_loans.data[col_n].dataPoints.push({x: this_date, y: this_amount});
 							col_n++;
 						});
                     });
@@ -356,8 +380,8 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                             text: "Financial Projections - Portfolio",
                             fontSize: 20
                         },
-			            exportFileName: "financial_projections_" + name + "_portfolio",
-			            exportEnabled: true,
+						exportFileName: "financial_projections_" + name + "_portfolio",
+						exportEnabled: true,
                         axisY:{
                             gridThickness: 1,
                         },
@@ -389,9 +413,9 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                         today = row.date.split('-');
 						this_date = new Date(today[0], today[1] - 1, today[2]);
 						var col_n = 0;
-                    	Object.keys(portfolio).forEach(function (holding) {
+						Object.keys(portfolio).forEach(function (holding) {
 							this_amount = Number(row.each_holding[holding].toFixed(2));
-                        	data_portfolio.data[col_n].dataPoints.push({x: this_date, y: this_amount});
+							data_portfolio.data[col_n].dataPoints.push({x: this_date, y: this_amount});
 							col_n++;
 						});
                     });
