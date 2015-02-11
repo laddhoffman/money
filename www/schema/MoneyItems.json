@@ -11,7 +11,7 @@
    },
    "schedule": {
      "title": "Schedule",
-     "$ref": "schema/MoneyItem.json?ver=6"
+     "$ref": "schema/MoneyItem.json?ver=7"
    }
   }
  }

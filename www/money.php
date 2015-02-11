@@ -1,9 +1,9 @@
 <?php
 
 if (isset($_SERVER['REMOTE_USER'])) {
-	$user = $_SERVER['REMOTE_USER'];
+    $user = $_SERVER['REMOTE_USER'];
 } else {
-	$user = 'guest';
+    $user = 'guest';
 }
 
 /* Build an array of each setup described in setups/ */
@@ -14,9 +14,9 @@ foreach ($files as $file) {
         if (preg_match('/^\.+$/', $file)) {
                 continue;
         }
-		if (is_dir($save_dir . '/' . $file)) {
-			continue;
-		}
+        if (is_dir($save_dir . '/' . $file)) {
+            continue;
+        }
         // echo "$file\n";
         $setups[] = json_decode(file_get_contents("$save_dir/$file"));
 }
@@ -59,6 +59,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
         <button id='compute'>Compute</button>
         <button id='copy'>Copy</button>
         <button id='restore'>Revert to Saved</button>
+        <div style='float:left; border:1px grey dashed'><input type='checkbox' id='log_scale'/> Log Scale</div>
         <!-- <button id='enable_disable'>Disable/Enable Form</button> -->
         <span id='valid_indicator'></span>
         
@@ -95,7 +96,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     items: {
                         // title: "Financial Setup",
                         headerTemplate: "{{self.name}}",
-                        $ref: "schema/Setup.json?ver=6"
+                        $ref: "schema/Setup.json?ver=7"
                     }
                 },
                 
@@ -108,8 +109,8 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                 // Require all properties by default
                 required_by_default: true,
 
-				disable_edit_json: true,
-				disable_properties: true
+                disable_edit_json: true,
+                disable_properties: true
             });
 
             
@@ -133,8 +134,8 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                 });
 */
 
-		// TODO: validate that interest are calculated monthly
-		// TODO: validate that interest extra matches each interest schedule key date
+        // TODO: validate that interest are calculated monthly
+        // TODO: validate that interest extra matches each interest schedule key date
 
                 // Custom validators must return an array of errors or an empty array if valid
                 JSONEditor.defaults.custom_validators.push(function(schema, value, path) {
@@ -193,12 +194,12 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     return true;
             }
 
-			function request_cleanup(files_to_keep) {
+            function request_cleanup(files_to_keep) {
                     files_to_keep_str = JSON.stringify(files_to_keep, null, 1);
                     // console.dir(JSON.parse(content_string));
                     // POST the data to be saved to a file
                     var xmlhttp;
-					xmlhttp = new XMLHttpRequest();
+                    xmlhttp = new XMLHttpRequest();
                     xmlhttp.open("POST", "cleanup_files.php", false);
                     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                     string_to_send = '';
@@ -208,30 +209,30 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     var result = JSON.parse(xmlhttp.responseText);
                     // console.log(result);
                     if (result.status == 0) {
-						// document.getElementById('status').innerHTML += result.message + '<br>';
-						return true;
-					} else {
-						document.getElementById('status').innerHTML += "Error cleaning up files: " + result.message + '<br>';
-						return false;
+                        // document.getElementById('status').innerHTML += result.message + '<br>';
+                        return true;
+                    } else {
+                        document.getElementById('status').innerHTML += "Error cleaning up files: " + result.message + '<br>';
+                        return false;
                     }
                     return true;
-			}
+            }
 
             function save_all() {
                 // Get the value from the editor
                 // console.log(editor.getValue());
                 setups = editor.getValue()
                 success = true;
-				var files_to_keep = [];
+                var files_to_keep = [];
                 setups.forEach(function(setup) {
-					files_to_keep.push(setup.name);
+                    files_to_keep.push(setup.name);
                     if (!save_to_file(setup)) {
                         success = false;
                     }
                 });
 
-				request_cleanup(files_to_keep);
-				
+                request_cleanup(files_to_keep);
+                
                 if (success) {
                     message = "Saved all input";
                     document.getElementById('status').innerHTML += message + '<br>';
@@ -243,27 +244,27 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                 }
             }
 
-			function add_setup(content) {
-      			// e.preventDefault();
-      			// e.stopPropagation();
-				var root = editor.editors.root;
-      			var i = root.rows.length;
-      			if(root.row_cache[i]) {
-        			root.rows[i] = root.row_cache[i];
-        			root.rows[i].container.style.display = '';
-        			if(root.rows[i].tab) root.rows[i].tab.style.display = '';
-        			root.rows[i].register();
-      			}
-      			else {
-        			root.addRow();
-      			}
-				root.rows[i].setValue(content);
-				// root.rows[i].setValue(root.rows[i-1].getValue());
-      			root.active_tab = root.rows[i].tab;
-      			root.refreshTabs();
-      			root.refreshValue();
-      			root.onChange(true);
-			}
+            function add_setup(content) {
+                // e.preventDefault();
+                // e.stopPropagation();
+                var root = editor.editors.root;
+                var i = root.rows.length;
+                if(root.row_cache[i]) {
+                    root.rows[i] = root.row_cache[i];
+                    root.rows[i].container.style.display = '';
+                    if(root.rows[i].tab) root.rows[i].tab.style.display = '';
+                    root.rows[i].register();
+                }
+                else {
+                    root.addRow();
+                }
+                root.rows[i].setValue(content);
+                // root.rows[i].setValue(root.rows[i-1].getValue());
+                root.active_tab = root.rows[i].tab;
+                root.refreshTabs();
+                root.refreshValue();
+                root.onChange(true);
+            }
 
             function draw_chart_canvasjs(chart_name, data) {
                 var chart = new CanvasJS.Chart(chart_name, data);
@@ -271,7 +272,7 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
             }
 
             function copy(name) {
-				var filename = name;
+                var filename = name;
 
                 var xmlhttp;
                 if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -291,14 +292,14 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                 if (result.status == 0) {
                     message = "Made a copy of the active setup";
                     document.getElementById('status').innerHTML += message + '<br>';
-					// TODO: now we need to append it to our array of setups
-					// editor.editors.root.push(result.content);
-					var content_obj = JSON.parse(result.content);
-					add_setup(content_obj);
+                    // TODO: now we need to append it to our array of setups
+                    // editor.editors.root.push(result.content);
+                    var content_obj = JSON.parse(result.content);
+                    add_setup(content_obj);
                     return true;
-				} else {
-					document.getElementById('status').innerHTML += result.message + '<br>';
-					return false;
+                } else {
+                    document.getElementById('status').innerHTML += result.message + '<br>';
+                    return false;
                 }
                 return true;
             }
@@ -329,6 +330,10 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     var result = JSON.parse(xmlhttp.responseText);
                     // console.log('response: ' + xmlhttp.responseText);
 
+                    if (result.status != 0) {
+                        document.getElementById('status').innerHTML += result.message + '<br>';
+                    }
+
                     result_append('<div id="chart_totals" style="height: 400px; width: 98%;">');
                     result_append('<br>');
                     result_append('<div id="chart_loans" style="height: 400px; width: 98%;">');
@@ -341,15 +346,17 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     // Data is returned as an array of rows; each row is an object representing a day.
                     // console.log(result.data[0]);
 
-                    // Produce a CanvasJS chart
+                    // Produce CanvasJS charts
+
+                    //------------------------------ totals ----------------------------------
 
                     data_totals = {
                         title:{
                             text: "Financial Projections - Totals",
                             fontSize: 20
                         },
-						exportFileName: "financial_projections_" + name + "_totals",
-						exportEnabled: true,
+                        exportFileName: "financial_projections_" + name + "_totals",
+                        exportEnabled: true,
                         axisY:{
                             gridThickness: 1,
                         },
@@ -361,34 +368,50 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                             fontFamily: "tamoha",
                         },
                         data: [
-                            { type: "line", name: "Checking", color: "green", showInLegend: true, dataPoints: [] },
-                            { type: "line", name: "Loans", color: "yellow", showInLegend: true, dataPoints: [] },
-                            { type: "line", name: "Portfolio", color: "blue", showInLegend: true, dataPoints: [] },
-                            { type: "line", name: "Net", color: "red", showInLegend: true, dataPoints: [] }
+                            // { type: "line", name: "Checking", color: "green", showInLegend: true, dataPoints: [] },
                         ]
                     };
-                    var n = 0;
+
+                    var colors = ['yellow', 'blue', 'red', 'green', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
+                    var accounts = result.data[0].each_account;
+
+                    n = 0;
+                    data_totals.data.push({ type: "line", name: "Loans", color: colors[n++], showInLegend: true, dataPoints: [] });
+                    data_totals.data.push({ type: "line", name: "Portfolio", color: colors[n++], showInLegend: true, dataPoints: [] });
+                    data_totals.data.push({ type: "line", name: "Net", color: colors[n++], showInLegend: true, dataPoints: [] });
+                    Object.keys(accounts).forEach(function (account) {
+                        var line = { type: "line", name: account, color: colors[n++], showInLegend: true, dataPoints: [] };
+                        data_totals.data.push(line);
+                    });
+
+                    n = 0;
                     result.data.forEach(function (row) {
                         // Add Totals to a dataset for graphing
                         today = row.date.split('-');
-			this_date = new Date(today[0], today[1] - 1, today[2]);
-                        data_totals.data[0].dataPoints.push({x: this_date, y: Number(row.totals.checking.toFixed(2))});
-                        data_totals.data[1].dataPoints.push({x: this_date, y: Number(row.totals.loans.toFixed(2))});
-                        data_totals.data[2].dataPoints.push({x: this_date, y: Number(row.totals.portfolio.toFixed(2))});
-                        data_totals.data[3].dataPoints.push({x: this_date, y: Number(row.totals.net_worth.toFixed(2))});
+                        this_date = new Date(today[0], today[1] - 1, today[2]);
+                        col_n = 0;
+                        //data_totals.data[0].dataPoints.push({x: this_date, y: Number(row.totals.checking.toFixed(2))});
+                        data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.totals.loans).toFixed(2))});
+                        data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.totals.portfolio).toFixed(2))});
+                        data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.totals.net_worth).toFixed(2))});
+                        Object.keys(accounts).forEach(function (account) {
+                            data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.each_account[account]).toFixed(2))});
+                        });
                     });
 
                     // console.log(data_canvasjs);
 
                     draw_chart_canvasjs('chart_totals', data_totals);
 
+                    //------------------------------ loans ----------------------------------
+
                     data_loans = {
                         title:{
                             text: "Financial Projections - Loans",
                             fontSize: 20
                         },
-						exportFileName: "financial_projections_" + name + "_loans",
-						exportEnabled: true,
+                        exportFileName: "financial_projections_" + name + "_loans",
+                        exportEnabled: true,
                         axisY:{
                             gridThickness: 1,
                         },
@@ -404,38 +427,40 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                         ]
                     };
 
-					var colors = ['blue', 'green', 'red', 'yellow', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
+                    var colors = ['blue', 'green', 'red', 'yellow', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
                     var loans = result.data[0].each_loan;
                     n = 0;
                     Object.keys(loans).forEach(function (loan) {
                         var line = { type: "line", name: loan, color: colors[n], showInLegend: true, dataPoints: [] };
-						data_loans.data.push(line);
-						n++;
-					});
+                        data_loans.data.push(line);
+                        n++;
+                    });
 
                     n = 0;
                     result.data.forEach(function (row) {
                         // Add Totals to a dataset for graphing
 
                         today = row.date.split('-');
-						this_date = new Date(today[0], today[1] - 1, today[2]);
-						var col_n = 0;
-						Object.keys(loans).forEach(function (loan) {
-							this_amount = Number(row.each_loan[loan].toFixed(2));
-							data_loans.data[col_n].dataPoints.push({x: this_date, y: this_amount});
-							col_n++;
-						});
+                        this_date = new Date(today[0], today[1] - 1, today[2]);
+                        var col_n = 0;
+                        Object.keys(loans).forEach(function (loan) {
+                            this_amount = Number(log_transform(row.each_loan[loan]).toFixed(2));
+                            data_loans.data[col_n].dataPoints.push({x: this_date, y: this_amount});
+                            col_n++;
+                        });
                     });
 
                     draw_chart_canvasjs('chart_loans', data_loans);
+
+                    //------------------------------ portfolio ----------------------------------
 
                     data_portfolio = {
                         title:{
                             text: "Financial Projections - Portfolio",
                             fontSize: 20
                         },
-						exportFileName: "financial_projections_" + name + "_portfolio",
-						exportEnabled: true,
+                        exportFileName: "financial_projections_" + name + "_portfolio",
+                        exportEnabled: true,
                         axisY:{
                             gridThickness: 1,
                         },
@@ -451,30 +476,36 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                         ]
                     };
 
-					var colors = ['blue', 'green', 'red', 'yellow', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
+                    var colors = ['blue', 'green', 'red', 'yellow', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
                     var portfolio = result.data[0].each_holding;
                     n = 0;
                     Object.keys(portfolio).forEach(function (holding) {
                         var line = { type: "line", name: holding, color: colors[n], showInLegend: true, dataPoints: [] };
-						data_portfolio.data.push(line);
-						n++;
-					});
+                        data_portfolio.data.push(line);
+                        n++;
+                    });
 
                     n = 0;
                     result.data.forEach(function (row) {
                         // Add Totals to a dataset for graphing
 
                         today = row.date.split('-');
-						this_date = new Date(today[0], today[1] - 1, today[2]);
-						var col_n = 0;
-						Object.keys(portfolio).forEach(function (holding) {
-							this_amount = Number(row.each_holding[holding].toFixed(2));
-							data_portfolio.data[col_n].dataPoints.push({x: this_date, y: this_amount});
-							col_n++;
-						});
+                        this_date = new Date(today[0], today[1] - 1, today[2]);
+                        var col_n = 0;
+                        Object.keys(portfolio).forEach(function (holding) {
+                            this_amount = Number(log_transform(row.each_holding[holding]).toFixed(2));
+                            data_portfolio.data[col_n].dataPoints.push({x: this_date, y: this_amount});
+                            col_n++;
+                        });
                     });
 
                     draw_chart_canvasjs('chart_portfolio', data_portfolio);
+            }
+
+            function log_transform(val) {
+                if (document.getElementById('log_scale').checked == false) { return val; }
+                if (val <= 1) { return 0; }
+                return Math.log10(val);
             }
 
             function result_clear() {

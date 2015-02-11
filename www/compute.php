@@ -24,9 +24,19 @@ if (isset($_SERVER['REMOTE_USER'])) {
 
 //echo "filename = $json_input_file";
 
-$debug = false;
-$debug_intervals = false;
-$debug_interest = false;
+if (isset ($_SERVER['REMOTE_USER'])) {
+        // LEAVE THESE FALSE.
+        $debug = false;
+        $debug_intervals = false;
+        $debug_interest = false;
+        $debug_equity = false;
+} else {
+        // Adjust these as needed.
+        $debug = false;
+        $debug_intervals = false;
+        $debug_interest = false;
+        $debug_equity = true;
+}
 
 $print_each_loan = true;
 $print_each_expense = true;
@@ -107,6 +117,11 @@ foreach ($input->loans as $a) {
     $loan = $loans->add_loan($a->name);
     $loan->setup_loan($a->interest_method, $a->interest_extra);
     $loan->set_balance($a->balance);
+    if ($a->checking_name) {
+        $loan->set_checking_name($finances, $a->checking_name);
+    } else {
+        $loan->set_checking_name($finances, $default_checking_name);
+    }
     foreach ($a->interest_schedule as $t) {
         $loan->add_interest($t->amount, $t->date_start, $t->date_end, $t->period, $t->extra);
     }

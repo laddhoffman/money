@@ -18,8 +18,8 @@
    "title": "Period",
    "type": "string",
    "enum": [
-	"constant",
 	"once",
+	"daily",
     "weekly",
     "biweekly",
     "monthly",

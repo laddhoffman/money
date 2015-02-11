@@ -1,5 +1,5 @@
 {
- "$ref": "schema/Account.json?ver=6",
+ "$ref": "schema/Account.json?ver=7",
  "properties": {
   "interest_method": {
    "propertyOrder": 2000,
@@ -24,12 +24,12 @@
   "interest_schedule": {
    "propertyOrder": 2000,
    "title": "Interest Schedule",
-   "$ref": "schema/MoneyItem.json?ver=6"
+   "$ref": "schema/MoneyItem.json?ver=7"
   },
   "payment_schedule": {
    "propertyOrder": 2000,
    "title": "Payment Schedule",
-   "$ref": "schema/MoneyItem.json?ver=6"
+   "$ref": "schema/MoneyItem.json?ver=7"
   }
  }
 }
