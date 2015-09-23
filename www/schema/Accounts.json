@@ -3,6 +3,6 @@
  "format": "tabs",
  "uniqueItems": true,
  "items": {
-  "$ref": "schema/Account.json?ver=6"
+  "$ref": "schema/Account.json?ver=7"
  }
 }

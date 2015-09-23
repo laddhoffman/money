@@ -2,6 +2,6 @@
  "type": "array",
  "format": "tabs",
  "items": {
-  "$ref": "schema/Loan.json?ver=6"
+  "$ref": "schema/Loan.json?ver=7"
  }
 }
