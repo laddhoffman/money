@@ -305,201 +305,227 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
             }
 
             function compute(name) {
-                    // document.getElementById('status').innerHTML += "compute("+name+")<br>";
+                // document.getElementById('status').innerHTML += "compute("+name+")<br>";
 
-                    // now call the script to perform the calculations
-                    var xmlhttp;
-                    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-                        xmlhttp=new XMLHttpRequest();
-                    } else {// code for IE6, IE5
-                        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                // we need to do our AJAX request on a separate thread;
+                // doing it on the main thread freezes the UI, and many browsers have
+                // deprecated it
+
+                // now call the script to perform the calculations
+                var xmlhttp;
+                if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                    xmlhttp = new XMLHttpRequest();
+                } else {// code for IE6, IE5
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+
+                // console.log("opening ajax connection");
+                xmlhttp.open("POST", "compute.php", true);
+                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                xmlhttp.onreadystatechange = function() {
+                  // 0: request not initialized 
+                  // 1: server connection established
+                  // 2: request received 
+                  // 3: processing request 
+                  // 4: request finished and response is ready
+                  if (xmlhttp.readyState == 1) {
+                    status_set('Computation in progress');
+                  } else if (xmlhttp.readyState == 2) {
+                  } else if (xmlhttp.readyState == 3) {
+                  } else if (xhttp.readyState == 4) {
+                    if (xmlhttp.status == 200) {
+                      //document.getElementById("demo").innerHTML = xhttp.responseText;
+                      handle_result(xmlhttp);
+                    } else {
+                      status_set('Response status: ' + xmlhttp.status);
                     }
+                  }
+                }
 
-                    // console.log("opening ajax connection");
-                    xmlhttp.open("POST", "compute.php", false);
-                    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                var string_to_send = '';
+                string_to_send += 'input_file='+encodeURIComponent(name);
+                // console.log(string_to_send);
+                // document.getElementById('status').innerHTML += "compute("+name+")<br>";
+                // console.log("posting data");
+                xmlhttp.send(string_to_send);
+                // console.log("posted data");
+            }
 
-                    var string_to_send = '';
-                    string_to_send += 'input_file='+encodeURIComponent(name);
-                    // console.log(string_to_send);
-                    // document.getElementById('status').innerHTML += "compute("+name+")<br>";
-                    // console.log("posting data");
-                    xmlhttp.send(string_to_send);
-                    // console.log("posted data");
+            function handle_result(xmlhttp) {
+                var result = JSON.parse(xmlhttp.responseText);
+                // console.log('response: ' + xmlhttp.responseText);
 
-                    var result = JSON.parse(xmlhttp.responseText);
-                    // console.log('response: ' + xmlhttp.responseText);
+                if (result.status != 0) {
+                    document.getElementById('status').innerHTML += result.message + '<br>';
+                }
 
-                    if (result.status != 0) {
-                        document.getElementById('status').innerHTML += result.message + '<br>';
-                    }
+                result_append('<div id="chart_totals" style="height: 400px; width: 98%;">');
+                result_append('<br>');
+                result_append('<div id="chart_loans" style="height: 400px; width: 98%;">');
+                result_append('<br>');
+                result_append('<div id="chart_portfolio" style="height: 400px; width: 98%;">');
 
-                    result_append('<div id="chart_totals" style="height: 400px; width: 98%;">');
-                    result_append('<br>');
-                    result_append('<div id="chart_loans" style="height: 400px; width: 98%;">');
-                    result_append('<br>');
-                    result_append('<div id="chart_portfolio" style="height: 400px; width: 98%;">');
+                document.getElementById('result_clear').style.visibility = 'visible';
 
-                    document.getElementById('result_clear').style.visibility = 'visible';
+                // Process the returned data
+                // Data is returned as an array of rows; each row is an object representing a day.
+                // console.log(result.data[0]);
 
-                    // Process the returned data
-                    // Data is returned as an array of rows; each row is an object representing a day.
-                    // console.log(result.data[0]);
+                // Produce CanvasJS charts
 
-                    // Produce CanvasJS charts
+                //------------------------------ totals ----------------------------------
 
-                    //------------------------------ totals ----------------------------------
+                data_totals = {
+                    title:{
+                        text: "Financial Projections - Totals",
+                        fontSize: 20
+                    },
+                    exportFileName: "financial_projections_" + name + "_totals",
+                    exportEnabled: true,
+                    axisY:{
+                        gridThickness: 1,
+                    },
+                    toolTip:{
+                        shared: true,
+                    },
+                    legend:{
+                        fontSize: 20,
+                        fontFamily: "tamoha",
+                    },
+                    data: [
+                        // { type: "line", name: "Checking", color: "green", showInLegend: true, dataPoints: [] },
+                    ]
+                };
 
-                    data_totals = {
-                        title:{
-                            text: "Financial Projections - Totals",
-                            fontSize: 20
-                        },
-                        exportFileName: "financial_projections_" + name + "_totals",
-                        exportEnabled: true,
-                        axisY:{
-                            gridThickness: 1,
-                        },
-                        toolTip:{
-                            shared: true,
-                        },
-                        legend:{
-                            fontSize: 20,
-                            fontFamily: "tamoha",
-                        },
-                        data: [
-                            // { type: "line", name: "Checking", color: "green", showInLegend: true, dataPoints: [] },
-                        ]
-                    };
+                var colors = ['yellow', 'blue', 'red', 'green', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
+                var accounts = result.data[0].each_account;
 
-                    var colors = ['yellow', 'blue', 'red', 'green', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
-                    var accounts = result.data[0].each_account;
+                n = 0;
+                data_totals.data.push({ type: "line", name: "Loans", color: colors[n++], showInLegend: true, dataPoints: [] });
+                data_totals.data.push({ type: "line", name: "Portfolio", color: colors[n++], showInLegend: true, dataPoints: [] });
+                data_totals.data.push({ type: "line", name: "Net", color: colors[n++], showInLegend: true, dataPoints: [] });
+                Object.keys(accounts).forEach(function (account) {
+                    var line = { type: "line", name: account, color: colors[n++], showInLegend: true, dataPoints: [] };
+                    data_totals.data.push(line);
+                });
 
-                    n = 0;
-                    data_totals.data.push({ type: "line", name: "Loans", color: colors[n++], showInLegend: true, dataPoints: [] });
-                    data_totals.data.push({ type: "line", name: "Portfolio", color: colors[n++], showInLegend: true, dataPoints: [] });
-                    data_totals.data.push({ type: "line", name: "Net", color: colors[n++], showInLegend: true, dataPoints: [] });
+                n = 0;
+                result.data.forEach(function (row) {
+                    // Add Totals to a dataset for graphing
+                    today = row.date.split('-');
+                    this_date = new Date(today[0], today[1] - 1, today[2]);
+                    col_n = 0;
+                    //data_totals.data[0].dataPoints.push({x: this_date, y: Number(row.totals.checking.toFixed(2))});
+                    data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.totals.loans).toFixed(2))});
+                    data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.totals.portfolio).toFixed(2))});
+                    data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.totals.net_worth).toFixed(2))});
                     Object.keys(accounts).forEach(function (account) {
-                        var line = { type: "line", name: account, color: colors[n++], showInLegend: true, dataPoints: [] };
-                        data_totals.data.push(line);
+                        data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.each_account[account]).toFixed(2))});
                     });
+                });
 
-                    n = 0;
-                    result.data.forEach(function (row) {
-                        // Add Totals to a dataset for graphing
-                        today = row.date.split('-');
-                        this_date = new Date(today[0], today[1] - 1, today[2]);
-                        col_n = 0;
-                        //data_totals.data[0].dataPoints.push({x: this_date, y: Number(row.totals.checking.toFixed(2))});
-                        data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.totals.loans).toFixed(2))});
-                        data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.totals.portfolio).toFixed(2))});
-                        data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.totals.net_worth).toFixed(2))});
-                        Object.keys(accounts).forEach(function (account) {
-                            data_totals.data[col_n++].dataPoints.push({x: this_date, y: Number(log_transform(row.each_account[account]).toFixed(2))});
-                        });
-                    });
+                // console.log(data_canvasjs);
 
-                    // console.log(data_canvasjs);
+                draw_chart_canvasjs('chart_totals', data_totals);
 
-                    draw_chart_canvasjs('chart_totals', data_totals);
+                //------------------------------ loans ----------------------------------
 
-                    //------------------------------ loans ----------------------------------
+                data_loans = {
+                    title:{
+                        text: "Financial Projections - Loans",
+                        fontSize: 20
+                    },
+                    exportFileName: "financial_projections_" + name + "_loans",
+                    exportEnabled: true,
+                    axisY:{
+                        gridThickness: 1,
+                    },
+                    toolTip:{
+                        shared: true,
+                    },
+                    legend:{
+                        fontSize: 20,
+                        fontFamily: "tamoha",
+                    },
+                    data: [
+                       /* { type: "line", name: "%s", color: "%s", showInLegend: true, dataPoints: [] } */
+                    ]
+                };
 
-                    data_loans = {
-                        title:{
-                            text: "Financial Projections - Loans",
-                            fontSize: 20
-                        },
-                        exportFileName: "financial_projections_" + name + "_loans",
-                        exportEnabled: true,
-                        axisY:{
-                            gridThickness: 1,
-                        },
-                        toolTip:{
-                            shared: true,
-                        },
-                        legend:{
-                            fontSize: 20,
-                            fontFamily: "tamoha",
-                        },
-                        data: [
-                           /* { type: "line", name: "%s", color: "%s", showInLegend: true, dataPoints: [] } */
-                        ]
-                    };
+                var colors = ['blue', 'green', 'red', 'yellow', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
+                var loans = result.data[0].each_loan;
+                n = 0;
+                Object.keys(loans).forEach(function (loan) {
+                    var line = { type: "line", name: loan, color: colors[n], showInLegend: true, dataPoints: [] };
+                    data_loans.data.push(line);
+                    n++;
+                });
 
-                    var colors = ['blue', 'green', 'red', 'yellow', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
-                    var loans = result.data[0].each_loan;
-                    n = 0;
+                n = 0;
+                result.data.forEach(function (row) {
+                    // Add Totals to a dataset for graphing
+
+                    today = row.date.split('-');
+                    this_date = new Date(today[0], today[1] - 1, today[2]);
+                    var col_n = 0;
                     Object.keys(loans).forEach(function (loan) {
-                        var line = { type: "line", name: loan, color: colors[n], showInLegend: true, dataPoints: [] };
-                        data_loans.data.push(line);
-                        n++;
+                        this_amount = Number(log_transform(row.each_loan[loan]).toFixed(2));
+                        data_loans.data[col_n].dataPoints.push({x: this_date, y: this_amount});
+                        col_n++;
                     });
+                });
 
-                    n = 0;
-                    result.data.forEach(function (row) {
-                        // Add Totals to a dataset for graphing
+                draw_chart_canvasjs('chart_loans', data_loans);
 
-                        today = row.date.split('-');
-                        this_date = new Date(today[0], today[1] - 1, today[2]);
-                        var col_n = 0;
-                        Object.keys(loans).forEach(function (loan) {
-                            this_amount = Number(log_transform(row.each_loan[loan]).toFixed(2));
-                            data_loans.data[col_n].dataPoints.push({x: this_date, y: this_amount});
-                            col_n++;
-                        });
-                    });
+                //------------------------------ portfolio ----------------------------------
 
-                    draw_chart_canvasjs('chart_loans', data_loans);
+                data_portfolio = {
+                    title:{
+                        text: "Financial Projections - Portfolio",
+                        fontSize: 20
+                    },
+                    exportFileName: "financial_projections_" + name + "_portfolio",
+                    exportEnabled: true,
+                    axisY:{
+                        gridThickness: 1,
+                    },
+                    toolTip:{
+                        shared: true,
+                    },
+                    legend:{
+                        fontSize: 20,
+                        fontFamily: "tamoha",
+                    },
+                    data: [
+                       /* { type: "line", name: "%s", color: "%s", showInLegend: true, dataPoints: [] } */
+                    ]
+                };
 
-                    //------------------------------ portfolio ----------------------------------
+                var colors = ['blue', 'green', 'red', 'yellow', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
+                var portfolio = result.data[0].each_holding;
+                n = 0;
+                Object.keys(portfolio).forEach(function (holding) {
+                    var line = { type: "line", name: holding, color: colors[n], showInLegend: true, dataPoints: [] };
+                    data_portfolio.data.push(line);
+                    n++;
+                });
 
-                    data_portfolio = {
-                        title:{
-                            text: "Financial Projections - Portfolio",
-                            fontSize: 20
-                        },
-                        exportFileName: "financial_projections_" + name + "_portfolio",
-                        exportEnabled: true,
-                        axisY:{
-                            gridThickness: 1,
-                        },
-                        toolTip:{
-                            shared: true,
-                        },
-                        legend:{
-                            fontSize: 20,
-                            fontFamily: "tamoha",
-                        },
-                        data: [
-                           /* { type: "line", name: "%s", color: "%s", showInLegend: true, dataPoints: [] } */
-                        ]
-                    };
+                n = 0;
+                result.data.forEach(function (row) {
+                    // Add Totals to a dataset for graphing
 
-                    var colors = ['blue', 'green', 'red', 'yellow', 'black', 'grey', 'orange', 'purple', 'cyan', 'magenta'];
-                    var portfolio = result.data[0].each_holding;
-                    n = 0;
+                    today = row.date.split('-');
+                    this_date = new Date(today[0], today[1] - 1, today[2]);
+                    var col_n = 0;
                     Object.keys(portfolio).forEach(function (holding) {
-                        var line = { type: "line", name: holding, color: colors[n], showInLegend: true, dataPoints: [] };
-                        data_portfolio.data.push(line);
-                        n++;
+                        this_amount = Number(log_transform(row.each_holding[holding]).toFixed(2));
+                        data_portfolio.data[col_n].dataPoints.push({x: this_date, y: this_amount});
+                        col_n++;
                     });
+                });
 
-                    n = 0;
-                    result.data.forEach(function (row) {
-                        // Add Totals to a dataset for graphing
-
-                        today = row.date.split('-');
-                        this_date = new Date(today[0], today[1] - 1, today[2]);
-                        var col_n = 0;
-                        Object.keys(portfolio).forEach(function (holding) {
-                            this_amount = Number(log_transform(row.each_holding[holding]).toFixed(2));
-                            data_portfolio.data[col_n].dataPoints.push({x: this_date, y: this_amount});
-                            col_n++;
-                        });
-                    });
-
-                    draw_chart_canvasjs('chart_portfolio', data_portfolio);
+                draw_chart_canvasjs('chart_portfolio', data_portfolio);
             }
 
             function log_transform(val) {
@@ -509,13 +535,17 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
             }
 
             function result_clear() {
-                    document.getElementById('status').innerHTML = '';
-                    document.getElementById('result').innerHTML = '';
-                    document.getElementById('result_clear').style.visibility = 'hidden';
+                document.getElementById('status').innerHTML = '';
+                document.getElementById('result').innerHTML = '';
+                document.getElementById('result_clear').style.visibility = 'hidden';
             }
 
             function result_append(text) {
-                    document.getElementById('result').innerHTML += text;
+                document.getElementById('result').innerHTML += text;
+            }
+
+            function status_set(text) {
+                document.getElementById('status').innerHTML = text;
             }
 
             // ====================== buttons ========================
