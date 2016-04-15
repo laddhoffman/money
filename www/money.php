@@ -333,9 +333,9 @@ $initial_data = json_encode($setups, JSON_PRETTY_PRINT);
                     status_set('Computation in progress');
                   } else if (xmlhttp.readyState == 2) {
                   } else if (xmlhttp.readyState == 3) {
-                  } else if (xhttp.readyState == 4) {
+                  } else if (xmlhttp.readyState == 4) {
                     if (xmlhttp.status == 200) {
-                      //document.getElementById("demo").innerHTML = xhttp.responseText;
+                      //document.getElementById("demo").innerHTML = xmlhttp.responseText;
                       handle_result(xmlhttp);
                     } else {
                       status_set('Response status: ' + xmlhttp.status);
