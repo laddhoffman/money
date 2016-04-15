@@ -170,6 +170,9 @@ while ($date <= $finances->date_end) {
     $date = next_day($date);
 }
 
+$result->status = 0;
+$result->message = "success";
+
 echo json_encode($result, JSON_PRETTY_PRINT);
 
 ?>
